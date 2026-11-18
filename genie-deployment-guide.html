@@ -49,6 +49,10 @@ ul.cell{margin:0;padding-left:16px}
 footer{font-size:13px;color:var(--muted)}
 @media (max-width:860px){.layout{grid-template-columns:1fr}.toc{position:static}}
 @media print{.toc{display:none}.layout{display:block}.cover{background:#fff;color:var(--ink);border-bottom:2px solid var(--lava)}.lede,.meta{color:var(--muted)}section{break-inside:auto}a{border:0}}
+.anim{position:relative;aspect-ratio:16/9;margin:10px 0 6px;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:#fff}
+.anim iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.anim-cap{font-size:13px;color:var(--muted)}
+@media print{.anim{display:none}}
 </style></head>
 <body>
 <header class="cover"><div class="wrap">
@@ -590,10 +594,615 @@ Use the minimum-privilege identity model for each integration.
 <h3>6.4 Environment Promotion</h3>
 <p>For enterprise deployments, keep promotion explicit and repeatable:</p>
 <ul><li>
-Use the Genie Agents management APIs to move agent configuration between environments. If you already standardise delivery with <a href="https://docs.databricks.com/aws/en/dev-tools/bundles/">Declarative Automation Bundles</a> (previously Databricks Asset Bundles), keep the surrounding deployment workflow in the same promotion pipeline. Bundles support Genie Agents natively: the <code>genie_spaces</code> resource (Databricks CLI 1.3.0 or later, direct deployment engine) deploys an agent from a <code>.geniespace.json</code> file kept in Git, and <code>databricks bundle generate genie-space</code> exports an agent built in the UI. See <a href="https://docs.databricks.com/aws/en/dev-tools/bundles/resources#genie_space">genie_space resource</a> and the <a href="https://github.com/koritadenada/genie-agents-ci-cd">Genie Agent CI/CD example</a> (dev, staging and prod with a benchmark gate). The management APIs remain available for custom pipelines.
+Use the Genie Agents management APIs to move agent configuration between environments. If you already standardise delivery with <a href="https://docs.databricks.com/aws/en/dev-tools/bundles/">Declarative Automation Bundles</a> (previously Databricks Asset Bundles), keep the surrounding deployment workflow in the same promotion pipeline. Bundles support Genie Agents natively: the <code>genie_spaces</code> resource (Databricks CLI 1.3.0 or later, direct deployment engine) deploys an agent defined in Git, inline in YAML so that bundle variables can point it at each environment's catalog, and <code>databricks bundle generate genie-space</code> exports an agent built in the UI. See <a href="https://docs.databricks.com/aws/en/dev-tools/bundles/resources#genie_space">genie_space resource</a> and the <a href="https://github.com/koritadenada/genie-agents-ci-cd">Genie Agents CI/CD repository</a> (dev, staging and prod with a benchmark gate). The management APIs remain available for custom pipelines.
 </li><li>Maintain separate catalogues for dev, staging, and production data.
 </li><li>Re-run benchmarks before every promotion.
 </li></ul>
+<h4>The pipeline at a glance <span class="tag new">New</span></h4>
+<div class="anim"><iframe title="Genie Agents CI/CD pipeline, animated" srcdoc="&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;en&quot;&gt;
+&lt;head&gt;
+&lt;meta charset=&quot;utf-8&quot; /&gt;
+&lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1&quot; /&gt;
+&lt;link rel=&quot;icon&quot; href=&quot;favicon.svg&quot; type=&quot;image/svg+xml&quot;&gt;
+&lt;link rel=&quot;icon&quot; href=&quot;favicon-32.png&quot; type=&quot;image/png&quot; sizes=&quot;32x32&quot;&gt;
+&lt;link rel=&quot;apple-touch-icon&quot; href=&quot;apple-touch-icon.png&quot;&gt;
+&lt;title&gt;Genie Agents CI/CD: dev, staging and prod with a benchmark gate&lt;/title&gt;
+&lt;link rel=&quot;preconnect&quot; href=&quot;https://fonts.googleapis.com&quot;&gt;
+&lt;link href=&quot;https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&amp;display=swap&quot; rel=&quot;stylesheet&quot;&gt;
+&lt;style&gt;
+  :root {
+    --lava:#FF3621; --lava2:#FF5F46; --peach:#FABFBA; --navy:#1B3139; --muted:#5A6B72;
+    --line:#E2E6EA; --line2:#CDD5DB; --card:#FFFFFF; --wash:#F5F7F9; --uc:#2272B4; --green:#00A06B;
+  }
+  * { box-sizing:border-box; }
+  html,body { margin:0; height:100%; background:#FFFFFF; overflow:hidden;
+    font-family:&quot;DM Sans&quot;,-apple-system,BlinkMacSystemFont,&quot;Segoe UI&quot;,Roboto,Helvetica,Arial,sans-serif; color:var(--navy); }
+  #fit { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; }
+  #stage { flex:none; position:relative; width:1280px; height:720px; background:#FFFFFF; transform-origin:center center; overflow:hidden; }
+
+  /* header */
+  .hdr { position:absolute; z-index:10; left:40px; right:40px; top:26px; height:44px; display:flex; align-items:center; justify-content:space-between; }
+  .brand { display:flex; align-items:center; gap:12px; }
+  .brand svg { width:28px; height:31px; }
+  .brand .t { font-size:19px; font-weight:700; letter-spacing:-.01em; }
+  .pills { display:flex; gap:8px; }
+  .pill { display:flex; align-items:center; gap:8px; padding:7px 13px 7px 8px; border-radius:999px; border:1px solid var(--line);
+    font-size:13px; font-weight:500; color:var(--muted); background:#fff; transition:all .4s; }
+  .pill b { width:22px; height:22px; border-radius:50%; display:inline-flex; align-items:center; justify-content:center;
+    background:var(--wash); color:var(--muted); font-size:12px; transition:all .4s; }
+  .pill { cursor:pointer; user-select:none; }
+  .pill:hover { border-color:var(--line2); color:var(--navy); }
+  .pill.cur { border-color:var(--navy); color:var(--navy); box-shadow:0 2px 8px rgba(27,49,57,.10); }
+  .pill.cur b { background:var(--lava); color:#fff; }
+  .pill.done b { background:var(--navy); color:#fff; }
+
+  /* scenes */
+  .scene { position:absolute; inset:0; opacity:0; pointer-events:none; transition:opacity .6s ease; }
+  .scene.show { opacity:1; pointer-events:auto; }
+  .stitle { position:absolute; left:40px; top:96px; }
+  .stitle .k { font-size:13px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--lava); }
+  .stitle .h { font-size:30px; font-weight:700; letter-spacing:-.015em; margin-top:2px; }
+
+  .node { position:absolute; background:var(--card); border:1px solid var(--line); border-top:4px solid var(--line2);
+    border-radius:12px; padding:16px 18px; box-shadow:0 2px 10px rgba(27,49,57,.07);
+    display:flex; gap:11px; align-items:center; }
+  .node .ico { flex:0 0 38px; width:38px; height:38px; }
+  .node .ico svg { width:38px; height:38px; display:block; }
+  .node .name { font-size:15px; font-weight:700; line-height:1.2; }
+  .node .desc { font-size:12.5px; color:var(--muted); margin-top:4px; line-height:1.35; }
+  .node.ext { border-top-color:var(--line2); background:var(--wash); }
+  .node.db { border-top-color:var(--lava); }
+  .node.hero { border-top-color:var(--navy); }
+  .badge { position:absolute; right:10px; top:-13px; font-size:11px; font-weight:700; padding:3px 8px; border-radius:999px;
+    background:#fff; border:1px solid var(--line2); color:var(--muted); letter-spacing:.02em; }
+  .badge.on { border-color:var(--lava); color:var(--lava); }
+
+  /* reveal */
+  .rev { opacity:0; transform:translateY(8px); transition:opacity .5s ease, transform .5s ease; }
+  .rev.on { opacity:1; transform:none; }
+
+  svg.wires { position:absolute; inset:0; width:1280px; height:720px; pointer-events:none; overflow:visible; }
+  .wire { fill:none; stroke:var(--line2); stroke-width:2.2; stroke-dasharray:1; stroke-dashoffset:1; transition:stroke-dashoffset .8s ease; }
+  .wire.hot { stroke:var(--lava); }
+  .wire.dash { stroke-dasharray:none; }
+  .wire.on { stroke-dashoffset:0; }
+  .wlabel { font-size:12px; fill:var(--muted); font-weight:500; opacity:0; transition:opacity .5s; }
+  .wlabel.on { opacity:1; }
+  .pulse { fill:var(--lava); opacity:0; }
+  .pulse.on { opacity:1; }
+
+  /* endpoint card */
+  .ep { position:absolute; background:#fff; border:1px solid var(--line); border-top:4px solid var(--navy); border-radius:14px;
+    box-shadow:0 4px 16px rgba(27,49,57,.10); overflow:hidden; }
+  .ep .bar { background:var(--navy); color:#fff; display:flex; align-items:center; gap:10px; padding:11px 16px; font-weight:700; font-size:15px; }
+  .ep .bar svg { width:26px; height:26px; }
+  .ep .bar .tag { margin-left:auto; font-size:11px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--peach); }
+  .step { display:flex; align-items:center; gap:12px; margin:10px 14px; padding:10px 12px; border-radius:10px;
+    border:1px solid var(--line); background:var(--wash); transition:all .45s ease; }
+  .step .n { width:26px; height:26px; flex:0 0 26px; border-radius:50%; background:#fff; border:1px solid var(--line2);
+    display:flex; align-items:center; justify-content:center; font-weight:700; font-size:13px; color:var(--muted); transition:all .45s; }
+  .step .tx { font-size:14px; font-weight:500; }
+  .step .tx span { display:block; font-size:12px; color:var(--muted); font-weight:400; margin-top:2px; }
+  .step .si { margin-left:auto; width:28px; height:28px; opacity:.35; transition:opacity .45s; }
+  .step .si svg { width:28px; height:28px; }
+  .step.on { background:#fff; border-color:var(--lava); box-shadow:0 2px 10px rgba(255,54,33,.12); }
+  .step.on .n { background:var(--lava); border-color:var(--lava); color:#fff; }
+  .step.on .si { opacity:1; }
+
+  /* request / score labels and moving envelopes */
+  .chip { position:absolute; padding:6px 11px; border-radius:8px; font-size:12.5px; font-weight:700; white-space:nowrap;
+    background:#fff; border:1.5px solid var(--lava); color:var(--navy); }
+  .chip.dark { border-color:var(--navy); }
+  .chip code, .packet code { font-family:ui-monospace,Menlo,monospace; font-weight:600; font-size:12px; }
+  .env { position:absolute; width:26px; height:26px; border-radius:7px; display:flex; align-items:center; justify-content:center;
+    box-shadow:0 3px 10px rgba(27,49,57,.2); opacity:0; transition:transform 1.5s cubic-bezier(.55,.05,.35,1), opacity .3s; }
+  .env svg { width:16px; height:16px; }
+  .env.req { background:var(--lava); } .env.res { background:var(--navy); }
+  .env.on { opacity:1; transform:translateX(var(--dx)); }
+  /* moving request / score chips (unused) */
+  .packet { position:absolute; padding:8px 12px; border-radius:9px; font-size:12.5px; font-weight:700; white-space:nowrap;
+    box-shadow:0 3px 12px rgba(27,49,57,.16); opacity:0; transition:transform 1.6s cubic-bezier(.55,.05,.35,1), opacity .3s; }
+  .packet code { font-family:&quot;DM Mono&quot;,ui-monospace,Menlo,monospace; font-weight:500; font-size:12px; }
+  .packet.req { background:var(--lava); color:#fff; }
+  .packet.res { background:var(--navy); color:#fff; }
+  .packet.on { opacity:1; transform:translateX(var(--dx)); }
+
+  /* mini drift chart */
+  .chart { display:flex; align-items:flex-end; gap:5px; height:34px; margin-top:8px; }
+  .chart i { display:block; width:14px; border-radius:3px 3px 0 0; background:var(--peach); height:4px; transition:height .9s ease; }
+  .chart i.base { background:var(--line2); }
+  .on .chart i { height:var(--h); }
+  .on .chart i.hi { background:var(--lava); }
+
+  /* caption */
+  .cap { position:absolute; left:40px; right:40px; bottom:34px; height:56px; display:flex; align-items:center; gap:14px;
+    border-radius:12px; background:var(--wash); border:1px solid var(--line); padding:0 18px; }
+  .cap .bar { width:4px; height:28px; border-radius:2px; background:var(--lava); flex:0 0 4px; }
+  .cap .txt { font-size:17px; font-weight:500; transition:opacity .35s ease; }
+  .cap .txt b { color:var(--lava); font-weight:700; }
+
+  /* overview blocks */
+  .blk { position:absolute; top:186px; width:360px; height:318px; border-radius:16px; background:#fff; border:1px solid var(--line);
+    box-shadow:0 4px 16px rgba(27,49,57,.08); padding:18px 20px; }
+  .blk { cursor:pointer; transition:box-shadow .2s, border-color .2s; }
+  .blk:hover { border-color:var(--line2); box-shadow:0 6px 20px rgba(27,49,57,.14); }
+  .blk .num { width:34px; height:34px; border-radius:50%; background:var(--navy); color:#fff; display:flex; align-items:center; justify-content:center; font-weight:700; }
+  .blk .bt { font-size:20px; font-weight:700; margin-top:12px; }
+  .blk .bd { font-size:13.5px; color:var(--muted); margin-top:4px; line-height:1.4; }
+  .blk .icons { display:flex; gap:10px; margin-top:14px; }
+  .blk .icons svg { width:38px; height:38px; }
+  .blk .run { position:absolute; left:20px; right:20px; bottom:16px; border-top:1px dashed var(--line2); padding-top:10px; font-size:13px; }
+  .blk .run div { display:flex; justify-content:space-between; margin-top:4px; }
+  .blk .run b { font-weight:700; }
+  .blk .run .always { color:var(--lava); }
+  .blk .run .lbl { font-size:11px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--muted); }
+
+  /* intro */
+  .intro { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; }
+  .intro svg { width:58px; height:64px; }
+  .intro .a { font-size:44px; font-weight:700; letter-spacing:-.02em; margin-top:22px; }
+  .intro .b { font-size:19px; color:var(--muted); margin-top:10px; }
+  .intro .parts { display:flex; gap:14px; margin-top:30px; }
+  .intro .parts span { padding:9px 16px; border-radius:999px; border:1px solid var(--line); font-weight:500; font-size:15px; }
+  .intro .parts b { color:var(--lava); margin-right:6px; }
+
+
+  /* precomputed features zoom-in */
+  .zc { position:absolute; background:#fff; border:1px solid var(--line); border-top:4px solid var(--line2); border-radius:12px;
+    box-shadow:0 2px 10px rgba(27,49,57,.07); padding:12px 14px; }
+  .zc .zh { display:flex; align-items:center; gap:9px; font-weight:700; font-size:15px; margin-bottom:8px; }
+  .zc .zh svg { width:26px; height:26px; }
+  .zc .zs { font-size:11.5px; color:var(--muted); margin:-4px 0 8px; }
+  .kv { display:flex; justify-content:space-between; gap:10px; font-family:ui-monospace,Menlo,monospace; font-size:12.5px;
+    padding:5px 8px; border-radius:6px; transition:background .4s, color .4s; }
+  .kv span:first-child { color:var(--muted); }
+  .kv b { font-weight:600; color:var(--navy); }
+  .mk.on { background:#FFE3DE; }
+  .mk.on span:first-child { color:var(--lava); }
+  .mk2.on { background:#E5EEF1; }
+  .bigv { font-size:30px; font-weight:700; color:var(--lava); margin-top:6px; }
+  .formula { font-family:ui-monospace,Menlo,monospace; font-size:13px; background:var(--wash); border-radius:6px; padding:8px; margin-top:8px; }
+  .tagsrc { font-size:10px; font-weight:700; letter-spacing:.04em; text-transform:uppercase; padding:1px 6px; border-radius:4px; margin-left:6px; }
+  .tagsrc.req { background:#FFE3DE; color:var(--lava); } .tagsrc.lk { background:#E5EEF1; color:var(--navy); }
+
+  /* decision strip */
+  .dec { position:absolute; background:#fff; border:1px solid var(--line); border-top:4px solid var(--green); border-radius:12px;
+    box-shadow:0 2px 10px rgba(27,49,57,.07); padding:10px 16px; }
+  .dec .row { display:flex; align-items:center; justify-content:space-between; }
+  .dec .lbl { font-weight:700; font-size:15px; }
+  .dec .ok { background:var(--green); color:#fff; font-weight:700; font-size:14px; padding:4px 12px; border-radius:999px; letter-spacing:.04em; }
+  .zones { position:relative; display:flex; height:14px; margin:22px 0 6px; }
+  .zones i:first-of-type { border-radius:7px 0 0 7px; } .zones i:last-of-type { border-radius:0 7px 7px 0; }
+  .zones i { display:block; height:100%; }
+  .zticks { display:flex; font-size:11.5px; color:var(--muted); }
+  .zticks span { flex:1; }
+  .marker { position:absolute; top:-9px; width:3px; height:32px; background:var(--navy); border-radius:2px; }
+  .marker b { position:absolute; top:-18px; left:50%; transform:translateX(-50%); font-size:12px; color:var(--navy); white-space:nowrap; }
+  .dec .note { font-size:10.5px; color:var(--muted); }
+
+  .uclink { color:var(--uc); font-weight:700; text-decoration:none; border-bottom:1px solid currentColor; white-space:nowrap; }
+  .uclink:hover { color:var(--lava); }
+  .ep .bar .uclink { color:var(--peach); font-size:12px; font-weight:700; }
+  .hint { position:absolute; right:14px; bottom:8px; font-size:10.5px; color:#B8C2C8; }
+  .back { display:inline-flex; align-items:center; justify-content:center; width:32px; height:32px; margin-right:4px; border-radius:50%;
+    border:1px solid var(--line); color:var(--muted); text-decoration:none; background:#fff; flex:0 0 32px; }
+  .back:hover { border-color:var(--line2); color:var(--navy); }
+  .back svg { width:15px; height:15px; }
+  .node.ok { border-top-color:var(--green); }
+  .node.bad { border-top-color:var(--lava); background:#FFF6F4; }
+  .ico.mail { background:var(--lava); border-radius:10px; display:flex; align-items:center; justify-content:center; }
+  .ico.mail svg { width:22px !important; height:22px !important; }
+  .chip.okc { border-color:var(--green); }
+  .dec .fail { background:var(--lava); color:#fff; font-weight:700; font-size:14px; padding:4px 12px; border-radius:999px; letter-spacing:.04em; }
+  .loopnote { position:absolute; font-size:12.5px; color:var(--muted); }
+  .loopnote b { color:var(--navy); }
+&lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;div id=&quot;fit&quot;&gt;&lt;div id=&quot;stage&quot;&gt;
+
+  &lt;div id=&quot;fit&quot;&gt;&lt;div id=&quot;stage&quot;&gt;
+
+  &lt;div class=&quot;hdr&quot; id=&quot;hdr&quot;&gt;
+    &lt;div class=&quot;brand&quot;&gt;&lt;svg viewBox=&quot;0 0 300 331&quot; fill=&quot;none&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot;&gt;
+&lt;path d=&quot;M283.923 136.449L150.144 213.624L6.88995 131.168L0 134.982V194.844L150.144 281.115L283.923 204.234V235.926L150.144 313.1L6.88995 230.644L0 234.458V244.729L150.144 331L300 244.729V184.867L293.11 181.052L150.144 263.215L16.0766 186.334V154.643L150.144 231.524L300 145.253V86.2713L292.536 81.8697L150.144 163.739L22.9665 90.9663L150.144 17.8998L254.641 78.055L263.828 72.773V65.4371L150.144 0L0 86.2713V95.6613L150.144 181.933L283.923 104.758V136.449Z&quot; fill=&quot;#FF3621&quot;/&gt;
+&lt;/svg&gt;&lt;div class=&quot;t&quot;&gt;Genie Agents CI/CD&lt;/div&gt;&lt;/div&gt;
+    &lt;div class=&quot;pills&quot;&gt;
+      &lt;div class=&quot;pill&quot; data-p=&quot;0&quot;&gt;&lt;b&gt;&amp;#8635;&lt;/b&gt;Overview&lt;/div&gt;
+      &lt;div class=&quot;pill&quot; data-p=&quot;1&quot;&gt;&lt;b&gt;1&lt;/b&gt;Pull request&lt;/div&gt;
+      &lt;div class=&quot;pill&quot; data-p=&quot;2&quot;&gt;&lt;b&gt;2&lt;/b&gt;Release to staging&lt;/div&gt;
+      &lt;div class=&quot;pill&quot; data-p=&quot;3&quot;&gt;&lt;b&gt;2b&lt;/b&gt;Benchmark gate&lt;/div&gt;
+      &lt;div class=&quot;pill&quot; data-p=&quot;4&quot;&gt;&lt;b&gt;3&lt;/b&gt;Promote to prod&lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+
+  &lt;!-- ============ OVERVIEW ============ --&gt;
+  &lt;section class=&quot;scene&quot; data-scene=&quot;0&quot; data-dur=&quot;9000&quot;&gt;
+    &lt;div class=&quot;stitle rev&quot; data-t=&quot;0&quot;&gt;&lt;div class=&quot;k&quot;&gt;The pipeline&lt;/div&gt;&lt;div class=&quot;h&quot;&gt;Every change: dev, then staging, then prod&lt;/div&gt;&lt;/div&gt;
+    &lt;svg class=&quot;wires&quot; viewBox=&quot;0 0 1280 720&quot;&gt;
+      &lt;path id=&quot;o1&quot; class=&quot;wire hot&quot; pathLength=&quot;1&quot; d=&quot;M 400 345 L 460 345&quot; data-t=&quot;1100&quot;/&gt;
+      &lt;path id=&quot;o2&quot; class=&quot;wire hot&quot; pathLength=&quot;1&quot; d=&quot;M 820 345 L 880 345&quot; data-t=&quot;2000&quot;/&gt;
+      &lt;text class=&quot;wlabel&quot; x=&quot;430&quot; y=&quot;333&quot; text-anchor=&quot;middle&quot; data-t=&quot;1100&quot;&gt;merge&lt;/text&gt;
+      &lt;text class=&quot;wlabel&quot; x=&quot;850&quot; y=&quot;333&quot; text-anchor=&quot;middle&quot; data-t=&quot;2000&quot;&gt;pass&lt;/text&gt;
+      &lt;circle class=&quot;pulse&quot; r=&quot;5&quot; data-t=&quot;1400&quot;&gt;&lt;animateMotion dur=&quot;1.0s&quot; repeatCount=&quot;indefinite&quot; begin=&quot;indefinite&quot;&gt;&lt;mpath href=&quot;#o1&quot;/&gt;&lt;/animateMotion&gt;&lt;/circle&gt;
+      &lt;circle class=&quot;pulse&quot; r=&quot;5&quot; data-t=&quot;2300&quot;&gt;&lt;animateMotion dur=&quot;1.0s&quot; repeatCount=&quot;indefinite&quot; begin=&quot;indefinite&quot;&gt;&lt;mpath href=&quot;#o2&quot;/&gt;&lt;/animateMotion&gt;&lt;/circle&gt;
+    &lt;/svg&gt;
+    &lt;div class=&quot;blk rev&quot; data-t=&quot;300&quot; data-go=&quot;1&quot; style=&quot;left:40px&quot;&gt;
+      &lt;div class=&quot;num&quot;&gt;1&lt;/div&gt;&lt;div class=&quot;bt&quot;&gt;Pull request&lt;/div&gt;&lt;div class=&quot;bd&quot;&gt;Test the change on dev before it can merge&lt;/div&gt;
+      &lt;div class=&quot;icons&quot;&gt;&lt;svg viewBox=&quot;0 0 512 512&quot; fill=&quot;none&quot;&gt;&lt;rect x=&quot;176&quot; y=&quot;176&quot; width=&quot;160&quot; height=&quot;160&quot; rx=&quot;24&quot; fill=&quot;#FF5F46&quot;/&gt;&lt;path d=&quot;M96 256C96 168 168 96 256 96C318 96 372 132 398 184&quot; stroke=&quot;#FABFBA&quot; stroke-width=&quot;34&quot; stroke-linecap=&quot;round&quot;/&gt;&lt;path d=&quot;M416 256C416 344 344 416 256 416C194 416 140 380 114 328&quot; stroke=&quot;#FABFBA&quot; stroke-width=&quot;34&quot; stroke-linecap=&quot;round&quot;/&gt;&lt;path d=&quot;M408 120V196H332&quot; stroke=&quot;#FF5F46&quot; stroke-width=&quot;30&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;/&gt;&lt;path d=&quot;M104 392V316H180&quot; stroke=&quot;#FF5F46&quot; stroke-width=&quot;30&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;/&gt;&lt;/svg&gt;&lt;svg viewBox=&quot;0 0 512 512&quot; fill=&quot;none&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot;&gt;
+&lt;path d=&quot;M209.385 409.061C192.063 409.061 178.02 426.494 178.02 448H323.502C323.502 426.494 309.46 409.061 292.138 409.061H209.385Z&quot; fill=&quot;#FF5F46&quot;/&gt;
+&lt;path d=&quot;M459.812 206.815C428.864 256.533 382.402 324.948 361.655 342.503C340.909 360.058 310.141 391.703 238.824 391.703C188.862 391.703 145.885 359.614 126.81 313.595C126.811 313.648 126.811 313.703 126.812 313.756C124.109 307.041 117.538 302.298 109.855 302.297C99.7606 302.297 91.5767 310.481 91.5767 320.576C91.5769 322.945 92.0279 325.113 92.8485 327.047C97.2392 337.39 108.92 337.83 108.92 370.096C108.92 374.793 108.92 366.343 108.92 370.096C78.5784 370.096 53.9815 345.498 53.9809 315.157C53.9809 284.815 78.5781 260.218 108.92 260.218H116.288V260.208H203.559C210.079 260.208 216.337 262.969 220.41 268.059C227.547 276.978 233.017 285.281 237.048 292.133C240.783 298.481 251.969 298.543 255.667 292.173C259.566 285.456 264.744 277.343 271.309 268.619C275.386 263.201 281.863 260.208 288.644 260.208H321.094C368.515 260.208 394.508 237.472 407.78 221.085C414.648 212.606 424.403 206.815 435.315 206.815H459.812Z&quot; fill=&quot;#FABFBA&quot;/&gt;
+&lt;path d=&quot;M246.744 286.125C246.743 224.929 197.938 175.293 137.646 175.064C197.938 174.835 246.744 125.196 246.744 64C246.744 64 246.744 64 246.744 64C246.744 125.338 295.778 175.063 356.263 175.063C295.778 175.063 246.744 224.787 246.744 286.125Z&quot; fill=&quot;#FF5F46&quot;/&gt;
+&lt;/svg&gt;&lt;svg viewBox=&quot;0 0 512 512&quot; fill=&quot;none&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot;&gt;
+&lt;path d=&quot;M220.408 401.342L362.785 257.242L220.408 113.143L220.408 56L299.582 56L299.582 136.544L314.387 142.792L370.291 85.8379L426.713 143.32L370.807 200.274L376.941 215.356H456.002V296.644H376.941L370.807 311.726L426.713 368.68L370.291 426.162L314.385 369.208L299.582 375.456L299.582 456H220.408L220.408 401.342Z&quot; fill=&quot;#FABFBA&quot;/&gt;
+&lt;path d=&quot;M156.584 100.984V100.722L308.78 256.001L156.584 411.281V411.004L141.711 426.159L85.2895 368.676L141.196 311.722L135.061 296.641H56V215.352H135.061L141.196 200.271L85.2895 143.317L141.711 85.8345L156.584 100.984Z&quot; fill=&quot;#FF5F46&quot;/&gt;
+&lt;/svg&gt;&lt;/div&gt;
+      &lt;div class=&quot;run&quot;&gt;&lt;div class=&quot;lbl&quot;&gt;What runs&lt;/div&gt;
+        &lt;div&gt;&lt;span&gt;Unit tests&lt;/span&gt;&lt;b&gt;every pull request&lt;/b&gt;&lt;/div&gt;
+        &lt;div&gt;&lt;span&gt;Deploy agent + benchmarks&lt;/span&gt;&lt;b&gt;dev&lt;/b&gt;&lt;/div&gt;
+        &lt;div&gt;&lt;span&gt;Benchmark gate&lt;/span&gt;&lt;b class=&quot;always&quot;&gt;required check&lt;/b&gt;&lt;/div&gt;&lt;/div&gt;
+    &lt;/div&gt;
+    &lt;div class=&quot;blk rev&quot; data-t=&quot;1200&quot; data-go=&quot;2&quot; style=&quot;left:460px&quot;&gt;
+      &lt;div class=&quot;num&quot;&gt;2&lt;/div&gt;&lt;div class=&quot;bt&quot;&gt;Release to staging&lt;/div&gt;&lt;div class=&quot;bd&quot;&gt;On merge: deploy exactly the plan, then gate&lt;/div&gt;
+      &lt;div class=&quot;icons&quot;&gt;&lt;svg viewBox=&quot;0 0 512 512&quot; fill=&quot;none&quot;&gt;&lt;path d=&quot;M112 48H320L400 128V440C400 454 390 464 376 464H112C98 464 88 454 88 440V72C88 58 98 48 112 48Z&quot; fill=&quot;#FABFBA&quot;/&gt;&lt;path d=&quot;M320 48V128H400Z&quot; fill=&quot;#FF5F46&quot;/&gt;&lt;rect x=&quot;144&quot; y=&quot;200&quot; width=&quot;200&quot; height=&quot;26&quot; rx=&quot;13&quot; fill=&quot;#FF5F46&quot;/&gt;&lt;rect x=&quot;144&quot; y=&quot;262&quot; width=&quot;160&quot; height=&quot;26&quot; rx=&quot;13&quot; fill=&quot;#fff&quot;/&gt;&lt;rect x=&quot;144&quot; y=&quot;324&quot; width=&quot;200&quot; height=&quot;26&quot; rx=&quot;13&quot; fill=&quot;#fff&quot;/&gt;&lt;rect x=&quot;144&quot; y=&quot;386&quot; width=&quot;120&quot; height=&quot;26&quot; rx=&quot;13&quot; fill=&quot;#fff&quot;/&gt;&lt;/svg&gt;&lt;svg viewBox=&quot;0 0 512 512&quot; fill=&quot;none&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot;&gt;
+&lt;path d=&quot;M209.385 409.061C192.063 409.061 178.02 426.494 178.02 448H323.502C323.502 426.494 309.46 409.061 292.138 409.061H209.385Z&quot; fill=&quot;#FF5F46&quot;/&gt;
+&lt;path d=&quot;M459.812 206.815C428.864 256.533 382.402 324.948 361.655 342.503C340.909 360.058 310.141 391.703 238.824 391.703C188.862 391.703 145.885 359.614 126.81 313.595C126.811 313.648 126.811 313.703 126.812 313.756C124.109 307.041 117.538 302.298 109.855 302.297C99.7606 302.297 91.5767 310.481 91.5767 320.576C91.5769 322.945 92.0279 325.113 92.8485 327.047C97.2392 337.39 108.92 337.83 108.92 370.096C108.92 374.793 108.92 366.343 108.92 370.096C78.5784 370.096 53.9815 345.498 53.9809 315.157C53.9809 284.815 78.5781 260.218 108.92 260.218H116.288V260.208H203.559C210.079 260.208 216.337 262.969 220.41 268.059C227.547 276.978 233.017 285.281 237.048 292.133C240.783 298.481 251.969 298.543 255.667 292.173C259.566 285.456 264.744 277.343 271.309 268.619C275.386 263.201 281.863 260.208 288.644 260.208H321.094C368.515 260.208 394.508 237.472 407.78 221.085C414.648 212.606 424.403 206.815 435.315 206.815H459.812Z&quot; fill=&quot;#FABFBA&quot;/&gt;
+&lt;path d=&quot;M246.744 286.125C246.743 224.929 197.938 175.293 137.646 175.064C197.938 174.835 246.744 125.196 246.744 64C246.744 64 246.744 64 246.744 64C246.744 125.338 295.778 175.063 356.263 175.063C295.778 175.063 246.744 224.787 246.744 286.125Z&quot; fill=&quot;#FF5F46&quot;/&gt;
+&lt;/svg&gt;&lt;svg viewBox=&quot;0 0 512 512&quot; fill=&quot;none&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot;&gt;
+&lt;path d=&quot;M220.408 401.342L362.785 257.242L220.408 113.143L220.408 56L299.582 56L299.582 136.544L314.387 142.792L370.291 85.8379L426.713 143.32L370.807 200.274L376.941 215.356H456.002V296.644H376.941L370.807 311.726L426.713 368.68L370.291 426.162L314.385 369.208L299.582 375.456L299.582 456H220.408L220.408 401.342Z&quot; fill=&quot;#FABFBA&quot;/&gt;
+&lt;path d=&quot;M156.584 100.984V100.722L308.78 256.001L156.584 411.281V411.004L141.711 426.159L85.2895 368.676L141.196 311.722L135.061 296.641H56V215.352H135.061L141.196 200.271L85.2895 143.317L141.711 85.8345L156.584 100.984Z&quot; fill=&quot;#FF5F46&quot;/&gt;
+&lt;/svg&gt;&lt;/div&gt;
+      &lt;div class=&quot;run&quot;&gt;&lt;div class=&quot;lbl&quot;&gt;What runs&lt;/div&gt;
+        &lt;div&gt;&lt;span&gt;Plan, then deploy the plan&lt;/span&gt;&lt;b&gt;staging&lt;/b&gt;&lt;/div&gt;
+        &lt;div&gt;&lt;span&gt;Benchmark gate&lt;/span&gt;&lt;b class=&quot;always&quot;&gt;above 80% or stop&lt;/b&gt;&lt;/div&gt;
+        &lt;div&gt;&lt;span&gt;On failure&lt;/span&gt;&lt;b&gt;reasons + email&lt;/b&gt;&lt;/div&gt;&lt;/div&gt;
+    &lt;/div&gt;
+    &lt;div class=&quot;blk rev&quot; data-t=&quot;2100&quot; data-go=&quot;4&quot; style=&quot;left:880px&quot;&gt;
+      &lt;div class=&quot;num&quot;&gt;3&lt;/div&gt;&lt;div class=&quot;bt&quot;&gt;Promote to prod&lt;/div&gt;&lt;div class=&quot;bd&quot;&gt;Only when the staging gate passed&lt;/div&gt;
+      &lt;div class=&quot;icons&quot;&gt;&lt;svg viewBox=&quot;0 0 512 512&quot; fill=&quot;none&quot;&gt;&lt;path d=&quot;M112 48H320L400 128V440C400 454 390 464 376 464H112C98 464 88 454 88 440V72C88 58 98 48 112 48Z&quot; fill=&quot;#FABFBA&quot;/&gt;&lt;path d=&quot;M320 48V128H400Z&quot; fill=&quot;#FF5F46&quot;/&gt;&lt;rect x=&quot;144&quot; y=&quot;200&quot; width=&quot;200&quot; height=&quot;26&quot; rx=&quot;13&quot; fill=&quot;#FF5F46&quot;/&gt;&lt;rect x=&quot;144&quot; y=&quot;262&quot; width=&quot;160&quot; height=&quot;26&quot; rx=&quot;13&quot; fill=&quot;#fff&quot;/&gt;&lt;rect x=&quot;144&quot; y=&quot;324&quot; width=&quot;200&quot; height=&quot;26&quot; rx=&quot;13&quot; fill=&quot;#fff&quot;/&gt;&lt;rect x=&quot;144&quot; y=&quot;386&quot; width=&quot;120&quot; height=&quot;26&quot; rx=&quot;13&quot; fill=&quot;#fff&quot;/&gt;&lt;/svg&gt;&lt;svg viewBox=&quot;0 0 512 512&quot; fill=&quot;none&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot;&gt;
+&lt;path d=&quot;M209.385 409.061C192.063 409.061 178.02 426.494 178.02 448H323.502C323.502 426.494 309.46 409.061 292.138 409.061H209.385Z&quot; fill=&quot;#FF5F46&quot;/&gt;
+&lt;path d=&quot;M459.812 206.815C428.864 256.533 382.402 324.948 361.655 342.503C340.909 360.058 310.141 391.703 238.824 391.703C188.862 391.703 145.885 359.614 126.81 313.595C126.811 313.648 126.811 313.703 126.812 313.756C124.109 307.041 117.538 302.298 109.855 302.297C99.7606 302.297 91.5767 310.481 91.5767 320.576C91.5769 322.945 92.0279 325.113 92.8485 327.047C97.2392 337.39 108.92 337.83 108.92 370.096C108.92 374.793 108.92 366.343 108.92 370.096C78.5784 370.096 53.9815 345.498 53.9809 315.157C53.9809 284.815 78.5781 260.218 108.92 260.218H116.288V260.208H203.559C210.079 260.208 216.337 262.969 220.41 268.059C227.547 276.978 233.017 285.281 237.048 292.133C240.783 298.481 251.969 298.543 255.667 292.173C259.566 285.456 264.744 277.343 271.309 268.619C275.386 263.201 281.863 260.208 288.644 260.208H321.094C368.515 260.208 394.508 237.472 407.78 221.085C414.648 212.606 424.403 206.815 435.315 206.815H459.812Z&quot; fill=&quot;#FABFBA&quot;/&gt;
+&lt;path d=&quot;M246.744 286.125C246.743 224.929 197.938 175.293 137.646 175.064C197.938 174.835 246.744 125.196 246.744 64C246.744 64 246.744 64 246.744 64C246.744 125.338 295.778 175.063 356.263 175.063C295.778 175.063 246.744 224.787 246.744 286.125Z&quot; fill=&quot;#FF5F46&quot;/&gt;
+&lt;/svg&gt;&lt;svg viewBox=&quot;0 0 512 512&quot; fill=&quot;none&quot;&gt;&lt;rect x=&quot;96&quot; y=&quot;56&quot; width=&quot;320&quot; height=&quot;400&quot; rx=&quot;32&quot; fill=&quot;#FABFBA&quot;/&gt;&lt;path d=&quot;M150 170L190 210L262 138&quot; stroke=&quot;#FF5F46&quot; stroke-width=&quot;30&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;/&gt;&lt;rect x=&quot;290&quot; y=&quot;160&quot; width=&quot;80&quot; height=&quot;26&quot; rx=&quot;13&quot; fill=&quot;#fff&quot;/&gt;&lt;path d=&quot;M160 300L220 360M220 300L160 360&quot; stroke=&quot;#FF5F46&quot; stroke-width=&quot;30&quot; stroke-linecap=&quot;round&quot;/&gt;&lt;rect x=&quot;290&quot; y=&quot;318&quot; width=&quot;80&quot; height=&quot;26&quot; rx=&quot;13&quot; fill=&quot;#fff&quot;/&gt;&lt;/svg&gt;&lt;/div&gt;
+      &lt;div class=&quot;run&quot;&gt;&lt;div class=&quot;lbl&quot;&gt;What runs&lt;/div&gt;
+        &lt;div&gt;&lt;span&gt;Plan, then deploy the plan&lt;/span&gt;&lt;b&gt;main branch only&lt;/b&gt;&lt;/div&gt;
+        &lt;div&gt;&lt;span&gt;Check on prod data&lt;/span&gt;&lt;b&gt;after deploy&lt;/b&gt;&lt;/div&gt;
+        &lt;div&gt;&lt;span&gt;Benchmarks&lt;/span&gt;&lt;b&gt;on demand&lt;/b&gt;&lt;/div&gt;&lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/section&gt;
+
+  &lt;!-- ============ PART 1: PULL REQUEST ============ --&gt;
+  &lt;section class=&quot;scene&quot; data-scene=&quot;1&quot; data-dur=&quot;11000&quot;&gt;
+    &lt;div class=&quot;stitle rev&quot; data-t=&quot;0&quot;&gt;&lt;div class=&quot;k&quot;&gt;Part 1&lt;/div&gt;&lt;div class=&quot;h&quot;&gt;Pull request: prove it on dev first&lt;/div&gt;&lt;/div&gt;
+    &lt;svg class=&quot;wires&quot; viewBox=&quot;0 0 1280 720&quot;&gt;
+      &lt;path id=&quot;a1&quot; class=&quot;wire&quot; pathLength=&quot;1&quot; d=&quot;M 230 346 L 262 346&quot; data-t=&quot;900&quot;/&gt;
+      &lt;path id=&quot;a2&quot; class=&quot;wire&quot; pathLength=&quot;1&quot; d=&quot;M 452 346 L 484 346&quot; data-t=&quot;2000&quot;/&gt;
+      &lt;path id=&quot;a3&quot; class=&quot;wire hot&quot; pathLength=&quot;1&quot; d=&quot;M 674 346 L 706 346&quot; data-t=&quot;3600&quot;/&gt;
+      &lt;path id=&quot;a4&quot; class=&quot;wire&quot; pathLength=&quot;1&quot; d=&quot;M 896 330 C 940 330, 950 250, 994 250&quot; data-t=&quot;5200&quot;/&gt;
+      &lt;path id=&quot;a5&quot; class=&quot;wire hot&quot; pathLength=&quot;1&quot; d=&quot;M 896 362 C 940 362, 950 456, 994 456&quot; data-t=&quot;6800&quot;/&gt;
+      &lt;text class=&quot;wlabel&quot; x=&quot;948&quot; y=&quot;226&quot; text-anchor=&quot;middle&quot; data-t=&quot;5300&quot;&gt;above 80%&lt;/text&gt;
+      &lt;text class=&quot;wlabel&quot; x=&quot;948&quot; y=&quot;494&quot; text-anchor=&quot;middle&quot; data-t=&quot;6900&quot;&gt;80% or less&lt;/text&gt;
+      &lt;circle class=&quot;pulse&quot; r=&quot;5&quot; data-t=&quot;3900&quot;&gt;&lt;animateMotion dur=&quot;1.0s&quot; repeatCount=&quot;indefinite&quot; begin=&quot;indefinite&quot;&gt;&lt;mpath href=&quot;#a3&quot;/&gt;&lt;/animateMotion&gt;&lt;/circle&gt;
+      &lt;circle class=&quot;pulse&quot; r=&quot;5&quot; data-t=&quot;7100&quot;&gt;&lt;animateMotion dur=&quot;1.3s&quot; repeatCount=&quot;indefinite&quot; begin=&quot;indefinite&quot;&gt;&lt;mpath href=&quot;#a5&quot;/&gt;&lt;/animateMotion&gt;&lt;/circle&gt;
+    &lt;/svg&gt;
+    &lt;div class=&quot;node ext rev&quot; data-t=&quot;300&quot; style=&quot;left:40px;top:288px;width:190px;height:116px&quot;&gt;
+      &lt;div class=&quot;ico&quot;&gt;&lt;svg viewBox=&quot;0 0 512 512&quot; fill=&quot;none&quot;&gt;&lt;rect x=&quot;176&quot; y=&quot;176&quot; width=&quot;160&quot; height=&quot;160&quot; rx=&quot;24&quot; fill=&quot;#FF5F46&quot;/&gt;&lt;path d=&quot;M96 256C96 168 168 96 256 96C318 96 372 132 398 184&quot; stroke=&quot;#FABFBA&quot; stroke-width=&quot;34&quot; stroke-linecap=&quot;round&quot;/&gt;&lt;path d=&quot;M416 256C416 344 344 416 256 416C194 416 140 380 114 328&quot; stroke=&quot;#FABFBA&quot; stroke-width=&quot;34&quot; stroke-linecap=&quot;round&quot;/&gt;&lt;path d=&quot;M408 120V196H332&quot; stroke=&quot;#FF5F46&quot; stroke-width=&quot;30&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;/&gt;&lt;path d=&quot;M104 392V316H180&quot; stroke=&quot;#FF5F46&quot; stroke-width=&quot;30&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;/&gt;&lt;/svg&gt;&lt;/div&gt;&lt;div&gt;&lt;div class=&quot;name&quot;&gt;Pull request&lt;/div&gt;&lt;div class=&quot;desc&quot;&gt;Change to the agent or its benchmarks&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;
+    &lt;div class=&quot;node db rev&quot; data-t=&quot;1000&quot; style=&quot;left:262px;top:288px;width:190px;height:116px&quot;&gt;
+      &lt;div class=&quot;ico&quot;&gt;&lt;svg viewBox=&quot;0 0 512 512&quot; fill=&quot;none&quot;&gt;&lt;rect x=&quot;96&quot; y=&quot;56&quot; width=&quot;320&quot; height=&quot;400&quot; rx=&quot;32&quot; fill=&quot;#FABFBA&quot;/&gt;&lt;path d=&quot;M150 170L190 210L262 138&quot; stroke=&quot;#FF5F46&quot; stroke-width=&quot;30&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;/&gt;&lt;rect x=&quot;290&quot; y=&quot;160&quot; width=&quot;80&quot; height=&quot;26&quot; rx=&quot;13&quot; fill=&quot;#fff&quot;/&gt;&lt;path d=&quot;M160 300L220 360M220 300L160 360&quot; stroke=&quot;#FF5F46&quot; stroke-width=&quot;30&quot; stroke-linecap=&quot;round&quot;/&gt;&lt;rect x=&quot;290&quot; y=&quot;318&quot; width=&quot;80&quot; height=&quot;26&quot; rx=&quot;13&quot; fill=&quot;#fff&quot;/&gt;&lt;/svg&gt;&lt;/div&gt;&lt;div&gt;&lt;div class=&quot;name&quot;&gt;Unit tests&lt;/div&gt;&lt;div class=&quot;desc&quot;&gt;pytest on the gate logic&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;
+    &lt;div class=&quot;node db rev&quot; data-t=&quot;2100&quot; style=&quot;left:484px;top:288px;width:190px;height:116px&quot;&gt;
+      &lt;span class=&quot;badge&quot;&gt;dev&lt;/span&gt;
+      &lt;div class=&quot;ico&quot;&gt;&lt;svg viewBox=&quot;0 0 512 512&quot; fill=&quot;none&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot;&gt;
+&lt;path d=&quot;M209.385 409.061C192.063 409.061 178.02 426.494 178.02 448H323.502C323.502 426.494 309.46 409.061 292.138 409.061H209.385Z&quot; fill=&quot;#FF5F46&quot;/&gt;
+&lt;path d=&quot;M459.812 206.815C428.864 256.533 382.402 324.948 361.655 342.503C340.909 360.058 310.141 391.703 238.824 391.703C188.862 391.703 145.885 359.614 126.81 313.595C126.811 313.648 126.811 313.703 126.812 313.756C124.109 307.041 117.538 302.298 109.855 302.297C99.7606 302.297 91.5767 310.481 91.5767 320.576C91.5769 322.945 92.0279 325.113 92.8485 327.047C97.2392 337.39 108.92 337.83 108.92 370.096C108.92 374.793 108.92 366.343 108.92 370.096C78.5784 370.096 53.9815 345.498 53.9809 315.157C53.9809 284.815 78.5781 260.218 108.92 260.218H116.288V260.208H203.559C210.079 260.208 216.337 262.969 220.41 268.059C227.547 276.978 233.017 285.281 237.048 292.133C240.783 298.481 251.969 298.543 255.667 292.173C259.566 285.456 264.744 277.343 271.309 268.619C275.386 263.201 281.863 260.208 288.644 260.208H321.094C368.515 260.208 394.508 237.472 407.78 221.085C414.648 212.606 424.403 206.815 435.315 206.815H459.812Z&quot; fill=&quot;#FABFBA&quot;/&gt;
+&lt;path d=&quot;M246.744 286.125C246.743 224.929 197.938 175.293 137.646 175.064C197.938 174.835 246.744 125.196 246.744 64C246.744 64 246.744 64 246.744 64C246.744 125.338 295.778 175.063 356.263 175.063C295.778 175.063 246.744 224.787 246.744 286.125Z&quot; fill=&quot;#FF5F46&quot;/&gt;
+&lt;/svg&gt;&lt;/div&gt;&lt;div&gt;&lt;div class=&quot;name&quot;&gt;Deploy to dev&lt;/div&gt;&lt;div class=&quot;desc&quot;&gt;Agent + 20 benchmarks, dev catalog&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;
+    &lt;div class=&quot;node hero rev&quot; data-t=&quot;3700&quot; style=&quot;left:706px;top:288px;width:190px;height:116px&quot;&gt;
+      &lt;span class=&quot;badge on&quot;&gt;gate&lt;/span&gt;
+      &lt;div class=&quot;ico&quot;&gt;&lt;svg viewBox=&quot;0 0 512 512&quot; fill=&quot;none&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot;&gt;
+&lt;path d=&quot;M220.408 401.342L362.785 257.242L220.408 113.143L220.408 56L299.582 56L299.582 136.544L314.387 142.792L370.291 85.8379L426.713 143.32L370.807 200.274L376.941 215.356H456.002V296.644H376.941L370.807 311.726L426.713 368.68L370.291 426.162L314.385 369.208L299.582 375.456L299.582 456H220.408L220.408 401.342Z&quot; fill=&quot;#FABFBA&quot;/&gt;
+&lt;path d=&quot;M156.584 100.984V100.722L308.78 256.001L156.584 411.281V411.004L141.711 426.159L85.2895 368.676L141.196 311.722L135.061 296.641H56V215.352H135.061L141.196 200.271L85.2895 143.317L141.711 85.8345L156.584 100.984Z&quot; fill=&quot;#FF5F46&quot;/&gt;
+&lt;/svg&gt;&lt;/div&gt;&lt;div&gt;&lt;div class=&quot;name&quot;&gt;Benchmark gate&lt;/div&gt;&lt;div class=&quot;desc&quot;&gt;Runs every question on dev data&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;
+    &lt;div class=&quot;node ok rev&quot; data-t=&quot;5300&quot; style=&quot;left:994px;top:196px;width:246px;height:108px&quot;&gt;
+      &lt;div class=&quot;ico&quot;&gt;&lt;svg viewBox=&quot;0 0 512 512&quot; fill=&quot;none&quot;&gt;&lt;rect x=&quot;96&quot; y=&quot;56&quot; width=&quot;320&quot; height=&quot;400&quot; rx=&quot;32&quot; fill=&quot;#FABFBA&quot;/&gt;&lt;path d=&quot;M150 170L190 210L262 138&quot; stroke=&quot;#FF5F46&quot; stroke-width=&quot;30&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;/&gt;&lt;rect x=&quot;290&quot; y=&quot;160&quot; width=&quot;80&quot; height=&quot;26&quot; rx=&quot;13&quot; fill=&quot;#fff&quot;/&gt;&lt;path d=&quot;M160 300L220 360M220 300L160 360&quot; stroke=&quot;#FF5F46&quot; stroke-width=&quot;30&quot; stroke-linecap=&quot;round&quot;/&gt;&lt;rect x=&quot;290&quot; y=&quot;318&quot; width=&quot;80&quot; height=&quot;26&quot; rx=&quot;13&quot; fill=&quot;#fff&quot;/&gt;&lt;/svg&gt;&lt;/div&gt;&lt;div&gt;&lt;div class=&quot;name&quot;&gt;Check passes&lt;/div&gt;&lt;div class=&quot;desc&quot;&gt;20/20 correct: the pull request can merge&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;
+    &lt;div class=&quot;node bad rev&quot; data-t=&quot;6900&quot; style=&quot;left:994px;top:402px;width:246px;height:108px&quot;&gt;
+      &lt;div class=&quot;ico mail&quot;&gt;&lt;svg viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot;&gt;&lt;rect x=&quot;3&quot; y=&quot;5&quot; width=&quot;18&quot; height=&quot;14&quot; rx=&quot;2&quot; stroke=&quot;#fff&quot; stroke-width=&quot;2&quot;/&gt;&lt;path d=&quot;M4 7l8 6 8-6&quot; stroke=&quot;#fff&quot; stroke-width=&quot;2&quot; stroke-linecap=&quot;round&quot;/&gt;&lt;/svg&gt;&lt;/div&gt;&lt;div&gt;&lt;div class=&quot;name&quot;&gt;Check fails&lt;/div&gt;&lt;div class=&quot;desc&quot;&gt;Reasons printed, team emailed, merge blocked&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;
+  &lt;/section&gt;
+
+  &lt;!-- ============ PART 2: RELEASE TO STAGING ============ --&gt;
+  &lt;section class=&quot;scene&quot; data-scene=&quot;2&quot; data-dur=&quot;11500&quot;&gt;
+    &lt;div class=&quot;stitle rev&quot; data-t=&quot;0&quot;&gt;&lt;div class=&quot;k&quot;&gt;Part 2&lt;/div&gt;&lt;div class=&quot;h&quot;&gt;Release to staging: deploy the plan, then gate&lt;/div&gt;&lt;/div&gt;
+    &lt;svg class=&quot;wires&quot; viewBox=&quot;0 0 1280 720&quot;&gt;
+      &lt;path id=&quot;b1&quot; class=&quot;wire&quot; pathLength=&quot;1&quot; d=&quot;M 230 346 L 262 346&quot; data-t=&quot;900&quot;/&gt;
+      &lt;path id=&quot;b2&quot; class=&quot;wire&quot; pathLength=&quot;1&quot; d=&quot;M 452 346 L 484 346&quot; data-t=&quot;2400&quot;/&gt;
+      &lt;path id=&quot;b3&quot; class=&quot;wire hot&quot; pathLength=&quot;1&quot; d=&quot;M 674 346 L 706 346&quot; data-t=&quot;4000&quot;/&gt;
+      &lt;path id=&quot;b4&quot; class=&quot;wire&quot; pathLength=&quot;1&quot; d=&quot;M 896 330 C 940 330, 950 250, 994 250&quot; data-t=&quot;5600&quot;/&gt;
+      &lt;path id=&quot;b5&quot; class=&quot;wire hot&quot; pathLength=&quot;1&quot; d=&quot;M 896 362 C 940 362, 950 456, 994 456&quot; data-t=&quot;7200&quot;/&gt;
+      &lt;text class=&quot;wlabel&quot; x=&quot;948&quot; y=&quot;226&quot; text-anchor=&quot;middle&quot; data-t=&quot;5700&quot;&gt;above 80%&lt;/text&gt;
+      &lt;text class=&quot;wlabel&quot; x=&quot;948&quot; y=&quot;494&quot; text-anchor=&quot;middle&quot; data-t=&quot;7300&quot;&gt;80% or less&lt;/text&gt;
+      &lt;circle class=&quot;pulse&quot; r=&quot;5&quot; data-t=&quot;1200&quot;&gt;&lt;animateMotion dur=&quot;1.0s&quot; repeatCount=&quot;indefinite&quot; begin=&quot;indefinite&quot;&gt;&lt;mpath href=&quot;#b1&quot;/&gt;&lt;/animateMotion&gt;&lt;/circle&gt;
+      &lt;circle class=&quot;pulse&quot; r=&quot;5&quot; data-t=&quot;4300&quot;&gt;&lt;animateMotion dur=&quot;1.0s&quot; repeatCount=&quot;indefinite&quot; begin=&quot;indefinite&quot;&gt;&lt;mpath href=&quot;#b3&quot;/&gt;&lt;/animateMotion&gt;&lt;/circle&gt;
+      &lt;circle class=&quot;pulse&quot; r=&quot;5&quot; data-t=&quot;7500&quot;&gt;&lt;animateMotion dur=&quot;1.3s&quot; repeatCount=&quot;indefinite&quot; begin=&quot;indefinite&quot;&gt;&lt;mpath href=&quot;#b5&quot;/&gt;&lt;/animateMotion&gt;&lt;/circle&gt;
+    &lt;/svg&gt;
+    &lt;div class=&quot;node ext rev&quot; data-t=&quot;300&quot; style=&quot;left:40px;top:288px;width:190px;height:116px&quot;&gt;
+      &lt;div class=&quot;ico&quot;&gt;&lt;svg viewBox=&quot;0 0 512 512&quot; fill=&quot;none&quot;&gt;&lt;rect x=&quot;176&quot; y=&quot;176&quot; width=&quot;160&quot; height=&quot;160&quot; rx=&quot;24&quot; fill=&quot;#FF5F46&quot;/&gt;&lt;path d=&quot;M96 256C96 168 168 96 256 96C318 96 372 132 398 184&quot; stroke=&quot;#FABFBA&quot; stroke-width=&quot;34&quot; stroke-linecap=&quot;round&quot;/&gt;&lt;path d=&quot;M416 256C416 344 344 416 256 416C194 416 140 380 114 328&quot; stroke=&quot;#FABFBA&quot; stroke-width=&quot;34&quot; stroke-linecap=&quot;round&quot;/&gt;&lt;path d=&quot;M408 120V196H332&quot; stroke=&quot;#FF5F46&quot; stroke-width=&quot;30&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;/&gt;&lt;path d=&quot;M104 392V316H180&quot; stroke=&quot;#FF5F46&quot; stroke-width=&quot;30&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;/&gt;&lt;/svg&gt;&lt;/div&gt;&lt;div&gt;&lt;div class=&quot;name&quot;&gt;Merge to main&lt;/div&gt;&lt;div class=&quot;desc&quot;&gt;Starts the release workflow&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;
+    &lt;div class=&quot;node db rev&quot; data-t=&quot;1000&quot; style=&quot;left:262px;top:288px;width:190px;height:116px&quot;&gt;
+      &lt;div class=&quot;ico&quot;&gt;&lt;svg viewBox=&quot;0 0 512 512&quot; fill=&quot;none&quot;&gt;&lt;path d=&quot;M112 48H320L400 128V440C400 454 390 464 376 464H112C98 464 88 454 88 440V72C88 58 98 48 112 48Z&quot; fill=&quot;#FABFBA&quot;/&gt;&lt;path d=&quot;M320 48V128H400Z&quot; fill=&quot;#FF5F46&quot;/&gt;&lt;rect x=&quot;144&quot; y=&quot;200&quot; width=&quot;200&quot; height=&quot;26&quot; rx=&quot;13&quot; fill=&quot;#FF5F46&quot;/&gt;&lt;rect x=&quot;144&quot; y=&quot;262&quot; width=&quot;160&quot; height=&quot;26&quot; rx=&quot;13&quot; fill=&quot;#fff&quot;/&gt;&lt;rect x=&quot;144&quot; y=&quot;324&quot; width=&quot;200&quot; height=&quot;26&quot; rx=&quot;13&quot; fill=&quot;#fff&quot;/&gt;&lt;rect x=&quot;144&quot; y=&quot;386&quot; width=&quot;120&quot; height=&quot;26&quot; rx=&quot;13&quot; fill=&quot;#fff&quot;/&gt;&lt;/svg&gt;&lt;/div&gt;&lt;div&gt;&lt;div class=&quot;name&quot;&gt;Plan&lt;/div&gt;&lt;div class=&quot;desc&quot;&gt;bundle plan: what will change, kept for review&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;
+    &lt;div class=&quot;node db rev&quot; data-t=&quot;2500&quot; style=&quot;left:484px;top:288px;width:190px;height:116px&quot;&gt;
+      &lt;span class=&quot;badge&quot;&gt;staging&lt;/span&gt;
+      &lt;div class=&quot;ico&quot;&gt;&lt;svg viewBox=&quot;0 0 512 512&quot; fill=&quot;none&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot;&gt;
+&lt;path d=&quot;M209.385 409.061C192.063 409.061 178.02 426.494 178.02 448H323.502C323.502 426.494 309.46 409.061 292.138 409.061H209.385Z&quot; fill=&quot;#FF5F46&quot;/&gt;
+&lt;path d=&quot;M459.812 206.815C428.864 256.533 382.402 324.948 361.655 342.503C340.909 360.058 310.141 391.703 238.824 391.703C188.862 391.703 145.885 359.614 126.81 313.595C126.811 313.648 126.811 313.703 126.812 313.756C124.109 307.041 117.538 302.298 109.855 302.297C99.7606 302.297 91.5767 310.481 91.5767 320.576C91.5769 322.945 92.0279 325.113 92.8485 327.047C97.2392 337.39 108.92 337.83 108.92 370.096C108.92 374.793 108.92 366.343 108.92 370.096C78.5784 370.096 53.9815 345.498 53.9809 315.157C53.9809 284.815 78.5781 260.218 108.92 260.218H116.288V260.208H203.559C210.079 260.208 216.337 262.969 220.41 268.059C227.547 276.978 233.017 285.281 237.048 292.133C240.783 298.481 251.969 298.543 255.667 292.173C259.566 285.456 264.744 277.343 271.309 268.619C275.386 263.201 281.863 260.208 288.644 260.208H321.094C368.515 260.208 394.508 237.472 407.78 221.085C414.648 212.606 424.403 206.815 435.315 206.815H459.812Z&quot; fill=&quot;#FABFBA&quot;/&gt;
+&lt;path d=&quot;M246.744 286.125C246.743 224.929 197.938 175.293 137.646 175.064C197.938 174.835 246.744 125.196 246.744 64C246.744 64 246.744 64 246.744 64C246.744 125.338 295.778 175.063 356.263 175.063C295.778 175.063 246.744 224.787 246.744 286.125Z&quot; fill=&quot;#FF5F46&quot;/&gt;
+&lt;/svg&gt;&lt;/div&gt;&lt;div&gt;&lt;div class=&quot;name&quot;&gt;Deploy the plan&lt;/div&gt;&lt;div class=&quot;desc&quot;&gt;Exactly the planned changes, staging catalog&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;
+    &lt;div class=&quot;node hero rev&quot; data-t=&quot;4100&quot; style=&quot;left:706px;top:288px;width:190px;height:116px&quot;&gt;
+      &lt;span class=&quot;badge on&quot;&gt;gate&lt;/span&gt;
+      &lt;div class=&quot;ico&quot;&gt;&lt;svg viewBox=&quot;0 0 512 512&quot; fill=&quot;none&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot;&gt;
+&lt;path d=&quot;M220.408 401.342L362.785 257.242L220.408 113.143L220.408 56L299.582 56L299.582 136.544L314.387 142.792L370.291 85.8379L426.713 143.32L370.807 200.274L376.941 215.356H456.002V296.644H376.941L370.807 311.726L426.713 368.68L370.291 426.162L314.385 369.208L299.582 375.456L299.582 456H220.408L220.408 401.342Z&quot; fill=&quot;#FABFBA&quot;/&gt;
+&lt;path d=&quot;M156.584 100.984V100.722L308.78 256.001L156.584 411.281V411.004L141.711 426.159L85.2895 368.676L141.196 311.722L135.061 296.641H56V215.352H135.061L141.196 200.271L85.2895 143.317L141.711 85.8345L156.584 100.984Z&quot; fill=&quot;#FF5F46&quot;/&gt;
+&lt;/svg&gt;&lt;/div&gt;&lt;div&gt;&lt;div class=&quot;name&quot;&gt;Benchmark gate&lt;/div&gt;&lt;div class=&quot;desc&quot;&gt;Every question on staging data&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;
+    &lt;div class=&quot;node ok rev&quot; data-t=&quot;5700&quot; style=&quot;left:994px;top:196px;width:246px;height:108px&quot;&gt;
+      &lt;div class=&quot;ico&quot;&gt;&lt;svg viewBox=&quot;0 0 512 512&quot; fill=&quot;none&quot;&gt;&lt;rect x=&quot;96&quot; y=&quot;56&quot; width=&quot;320&quot; height=&quot;400&quot; rx=&quot;32&quot; fill=&quot;#FABFBA&quot;/&gt;&lt;path d=&quot;M150 170L190 210L262 138&quot; stroke=&quot;#FF5F46&quot; stroke-width=&quot;30&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;/&gt;&lt;rect x=&quot;290&quot; y=&quot;160&quot; width=&quot;80&quot; height=&quot;26&quot; rx=&quot;13&quot; fill=&quot;#fff&quot;/&gt;&lt;path d=&quot;M160 300L220 360M220 300L160 360&quot; stroke=&quot;#FF5F46&quot; stroke-width=&quot;30&quot; stroke-linecap=&quot;round&quot;/&gt;&lt;rect x=&quot;290&quot; y=&quot;318&quot; width=&quot;80&quot; height=&quot;26&quot; rx=&quot;13&quot; fill=&quot;#fff&quot;/&gt;&lt;/svg&gt;&lt;/div&gt;&lt;div&gt;&lt;div class=&quot;name&quot;&gt;Promote to prod&lt;/div&gt;&lt;div class=&quot;desc&quot;&gt;The prod job starts (Part 3)&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;
+    &lt;div class=&quot;node bad rev&quot; data-t=&quot;7300&quot; style=&quot;left:994px;top:402px;width:246px;height:108px&quot;&gt;
+      &lt;div class=&quot;ico mail&quot;&gt;&lt;svg viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot;&gt;&lt;rect x=&quot;3&quot; y=&quot;5&quot; width=&quot;18&quot; height=&quot;14&quot; rx=&quot;2&quot; stroke=&quot;#fff&quot; stroke-width=&quot;2&quot;/&gt;&lt;path d=&quot;M4 7l8 6 8-6&quot; stroke=&quot;#fff&quot; stroke-width=&quot;2&quot; stroke-linecap=&quot;round&quot;/&gt;&lt;/svg&gt;&lt;/div&gt;&lt;div&gt;&lt;div class=&quot;name&quot;&gt;Pipeline stops&lt;/div&gt;&lt;div class=&quot;desc&quot;&gt;Reasons printed, team emailed, prod untouched&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;
+    &lt;div class=&quot;chip rev&quot; data-t=&quot;7600&quot; style=&quot;left:994px;top:528px&quot;&gt;real run: &lt;code&gt;16/20 = 80%&lt;/code&gt;, not above&lt;/div&gt;
+  &lt;/section&gt;
+
+  &lt;!-- ============ PART 2b: THE BENCHMARK GATE (ZOOM-IN) ============ --&gt;
+  &lt;section class=&quot;scene&quot; data-scene=&quot;2b&quot; data-dur=&quot;13500&quot;&gt;
+    &lt;div class=&quot;stitle rev&quot; data-t=&quot;0&quot;&gt;&lt;div class=&quot;k&quot;&gt;Part 2b&lt;/div&gt;&lt;div class=&quot;h&quot;&gt;The benchmark gate, step by step&lt;/div&gt;&lt;/div&gt;
+    &lt;svg class=&quot;wires&quot; viewBox=&quot;0 0 1280 720&quot;&gt;
+      &lt;path id=&quot;z1&quot; class=&quot;wire hot&quot; pathLength=&quot;1&quot; d=&quot;M 322 300 L 346 300&quot; data-t=&quot;2200&quot;/&gt;
+      &lt;path id=&quot;z2&quot; class=&quot;wire hot&quot; pathLength=&quot;1&quot; d=&quot;M 628 300 L 652 300&quot; data-t=&quot;4600&quot;/&gt;
+      &lt;path id=&quot;z3&quot; class=&quot;wire hot&quot; pathLength=&quot;1&quot; d=&quot;M 934 300 L 958 300&quot; data-t=&quot;8000&quot;/&gt;
+    &lt;/svg&gt;
+    &lt;div class=&quot;zc rev&quot; data-t=&quot;300&quot; style=&quot;left:40px;top:175px;width:282px;height:262px;border-top-color:var(--line2)&quot;&gt;
+      &lt;div class=&quot;zh&quot;&gt;&lt;svg viewBox=&quot;0 0 512 512&quot; fill=&quot;none&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot;&gt;
+&lt;path d=&quot;M209.385 409.061C192.063 409.061 178.02 426.494 178.02 448H323.502C323.502 426.494 309.46 409.061 292.138 409.061H209.385Z&quot; fill=&quot;#FF5F46&quot;/&gt;
+&lt;path d=&quot;M459.812 206.815C428.864 256.533 382.402 324.948 361.655 342.503C340.909 360.058 310.141 391.703 238.824 391.703C188.862 391.703 145.885 359.614 126.81 313.595C126.811 313.648 126.811 313.703 126.812 313.756C124.109 307.041 117.538 302.298 109.855 302.297C99.7606 302.297 91.5767 310.481 91.5767 320.576C91.5769 322.945 92.0279 325.113 92.8485 327.047C97.2392 337.39 108.92 337.83 108.92 370.096C108.92 374.793 108.92 366.343 108.92 370.096C78.5784 370.096 53.9815 345.498 53.9809 315.157C53.9809 284.815 78.5781 260.218 108.92 260.218H116.288V260.208H203.559C210.079 260.208 216.337 262.969 220.41 268.059C227.547 276.978 233.017 285.281 237.048 292.133C240.783 298.481 251.969 298.543 255.667 292.173C259.566 285.456 264.744 277.343 271.309 268.619C275.386 263.201 281.863 260.208 288.644 260.208H321.094C368.515 260.208 394.508 237.472 407.78 221.085C414.648 212.606 424.403 206.815 435.315 206.815H459.812Z&quot; fill=&quot;#FABFBA&quot;/&gt;
+&lt;path d=&quot;M246.744 286.125C246.743 224.929 197.938 175.293 137.646 175.064C197.938 174.835 246.744 125.196 246.744 64C246.744 64 246.744 64 246.744 64C246.744 125.338 295.778 175.063 356.263 175.063C295.778 175.063 246.744 224.787 246.744 286.125Z&quot; fill=&quot;#FF5F46&quot;/&gt;
+&lt;/svg&gt;Benchmarks&lt;/div&gt;
+      &lt;div class=&quot;zs&quot;&gt;deployed with the agent, from Git&lt;/div&gt;
+      &lt;div class=&quot;kv mk2&quot; data-t=&quot;1200&quot;&gt;&lt;span&gt;business questions&lt;/span&gt;&lt;b&gt;10&lt;/b&gt;&lt;/div&gt;
+      &lt;div class=&quot;kv mk2&quot; data-t=&quot;1200&quot;&gt;&lt;span&gt;phrasings each&lt;/span&gt;&lt;b&gt;2&lt;/b&gt;&lt;/div&gt;
+      &lt;div class=&quot;kv mk&quot; data-t=&quot;1600&quot;&gt;&lt;span&gt;benchmarks&lt;/span&gt;&lt;b&gt;20&lt;/b&gt;&lt;/div&gt;
+      &lt;div class=&quot;kv&quot;&gt;&lt;span&gt;each with&lt;/span&gt;&lt;b&gt;expected SQL&lt;/b&gt;&lt;/div&gt;
+    &lt;/div&gt;
+    &lt;div class=&quot;zc rev&quot; data-t=&quot;2200&quot; style=&quot;left:346px;top:175px;width:282px;height:262px;border-top-color:var(--uc)&quot;&gt;
+      &lt;div class=&quot;zh&quot;&gt;&lt;svg viewBox=&quot;0 0 512 512&quot; fill=&quot;none&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot;&gt;
+&lt;path d=&quot;M220.408 401.342L362.785 257.242L220.408 113.143L220.408 56L299.582 56L299.582 136.544L314.387 142.792L370.291 85.8379L426.713 143.32L370.807 200.274L376.941 215.356H456.002V296.644H376.941L370.807 311.726L426.713 368.68L370.291 426.162L314.385 369.208L299.582 375.456L299.582 456H220.408L220.408 401.342Z&quot; fill=&quot;#FABFBA&quot;/&gt;
+&lt;path d=&quot;M156.584 100.984V100.722L308.78 256.001L156.584 411.281V411.004L141.711 426.159L85.2895 368.676L141.196 311.722L135.061 296.641H56V215.352H135.061L141.196 200.271L85.2895 143.317L141.711 85.8345L156.584 100.984Z&quot; fill=&quot;#FF5F46&quot;/&gt;
+&lt;/svg&gt;Eval run&lt;/div&gt;
+      &lt;div class=&quot;zs&quot;&gt;gate job, Genie benchmark API (Beta)&lt;/div&gt;
+      &lt;div class=&quot;kv rev&quot; data-t=&quot;2700&quot;&gt;&lt;span&gt;RUNNING&lt;/span&gt;&lt;b&gt;3/20&lt;/b&gt;&lt;/div&gt;
+      &lt;div class=&quot;kv rev&quot; data-t=&quot;3200&quot;&gt;&lt;span&gt;RUNNING&lt;/span&gt;&lt;b&gt;12/20&lt;/b&gt;&lt;/div&gt;
+      &lt;div class=&quot;kv mk2&quot; data-t=&quot;3700&quot;&gt;&lt;span&gt;DONE&lt;/span&gt;&lt;b&gt;20/20&lt;/b&gt;&lt;/div&gt;
+      &lt;div class=&quot;rev&quot; data-t=&quot;4000&quot; style=&quot;font-size:12px;color:var(--muted);margin-top:10px&quot;&gt;Genie answers each question; the result is compared with the expected SQL&lt;/div&gt;
+    &lt;/div&gt;
+    &lt;div class=&quot;zc rev&quot; data-t=&quot;4600&quot; style=&quot;left:652px;top:175px;width:282px;height:262px;border-top-color:var(--navy)&quot;&gt;
+      &lt;div class=&quot;zh&quot;&gt;&lt;svg viewBox=&quot;0 0 512 512&quot; fill=&quot;none&quot;&gt;&lt;rect x=&quot;96&quot; y=&quot;56&quot; width=&quot;320&quot; height=&quot;400&quot; rx=&quot;32&quot; fill=&quot;#FABFBA&quot;/&gt;&lt;path d=&quot;M150 170L190 210L262 138&quot; stroke=&quot;#FF5F46&quot; stroke-width=&quot;30&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;/&gt;&lt;rect x=&quot;290&quot; y=&quot;160&quot; width=&quot;80&quot; height=&quot;26&quot; rx=&quot;13&quot; fill=&quot;#fff&quot;/&gt;&lt;path d=&quot;M160 300L220 360M220 300L160 360&quot; stroke=&quot;#FF5F46&quot; stroke-width=&quot;30&quot; stroke-linecap=&quot;round&quot;/&gt;&lt;rect x=&quot;290&quot; y=&quot;318&quot; width=&quot;80&quot; height=&quot;26&quot; rx=&quot;13&quot; fill=&quot;#fff&quot;/&gt;&lt;/svg&gt;Accuracy&lt;/div&gt;
+      &lt;div class=&quot;zs&quot;&gt;needs review counts as not correct&lt;/div&gt;
+      &lt;div class=&quot;formula rev&quot; data-t=&quot;5100&quot;&gt;correct / benchmarks&lt;/div&gt;
+      &lt;div class=&quot;bigv rev&quot; data-t=&quot;5600&quot;&gt;16 / 20 = 80%&lt;/div&gt;
+      &lt;div class=&quot;rev&quot; data-t=&quot;6100&quot; style=&quot;font-size:12px;color:var(--muted);margin-top:8px&quot;&gt;Required: &lt;b style=&quot;color:var(--navy)&quot;&gt;above 80%&lt;/b&gt;&lt;/div&gt;
+    &lt;/div&gt;
+    &lt;div class=&quot;zc rev&quot; data-t=&quot;8000&quot; style=&quot;left:958px;top:175px;width:282px;height:262px;border-top-color:var(--lava)&quot;&gt;
+      &lt;div class=&quot;zh&quot;&gt;&lt;svg viewBox=&quot;0 0 512 512&quot; fill=&quot;none&quot;&gt;&lt;path d=&quot;M112 48H320L400 128V440C400 454 390 464 376 464H112C98 464 88 454 88 440V72C88 58 98 48 112 48Z&quot; fill=&quot;#FABFBA&quot;/&gt;&lt;path d=&quot;M320 48V128H400Z&quot; fill=&quot;#FF5F46&quot;/&gt;&lt;rect x=&quot;144&quot; y=&quot;200&quot; width=&quot;200&quot; height=&quot;26&quot; rx=&quot;13&quot; fill=&quot;#FF5F46&quot;/&gt;&lt;rect x=&quot;144&quot; y=&quot;262&quot; width=&quot;160&quot; height=&quot;26&quot; rx=&quot;13&quot; fill=&quot;#fff&quot;/&gt;&lt;rect x=&quot;144&quot; y=&quot;324&quot; width=&quot;200&quot; height=&quot;26&quot; rx=&quot;13&quot; fill=&quot;#fff&quot;/&gt;&lt;rect x=&quot;144&quot; y=&quot;386&quot; width=&quot;120&quot; height=&quot;26&quot; rx=&quot;13&quot; fill=&quot;#fff&quot;/&gt;&lt;/svg&gt;Report&lt;/div&gt;
+      &lt;div class=&quot;zs&quot;&gt;CI log, job summary, failure email&lt;/div&gt;
+      &lt;div class=&quot;kv mk&quot; data-t=&quot;8500&quot;&gt;&lt;span&gt;[BAD]&lt;/span&gt;&lt;b&gt;orders in 2024?&lt;/b&gt;&lt;/div&gt;
+      &lt;div class=&quot;rev&quot; data-t=&quot;8700&quot; style=&quot;font-size:11.5px;color:var(--muted);margin:2px 8px 6px&quot;&gt;a value differs; a filter is missing or wrong&lt;/div&gt;
+      &lt;div class=&quot;kv mk&quot; data-t=&quot;9000&quot;&gt;&lt;span&gt;[BAD]&lt;/span&gt;&lt;b&gt;revenue in 2025?&lt;/b&gt;&lt;/div&gt;
+      &lt;div class=&quot;rev&quot; data-t=&quot;9200&quot; style=&quot;font-size:11.5px;color:var(--muted);margin:2px 8px 0&quot;&gt;and 2 more, each with its reason&lt;/div&gt;
+    &lt;/div&gt;
+    &lt;svg class=&quot;wires&quot; viewBox=&quot;0 0 1280 720&quot;&gt;
+      &lt;path id=&quot;z4&quot; class=&quot;wire hot&quot; pathLength=&quot;1&quot; d=&quot;M 793 437 L 793 470&quot; data-t=&quot;6500&quot;/&gt;
+    &lt;/svg&gt;
+    &lt;div class=&quot;dec rev&quot; data-t=&quot;6600&quot; style=&quot;left:40px;top:470px;width:1200px;height:118px;border-top-color:var(--lava)&quot;&gt;
+      &lt;div class=&quot;row&quot;&gt;&lt;span class=&quot;lbl&quot;&gt;Gate: promote only above 80%&lt;/span&gt;&lt;span class=&quot;fail rev&quot; data-t=&quot;7400&quot;&gt;FAILED, PIPELINE STOPS&lt;/span&gt;&lt;/div&gt;
+      &lt;div class=&quot;zones&quot;&gt;
+        &lt;i style=&quot;width:80%;background:#FFC7BE&quot;&gt;&lt;/i&gt;&lt;i style=&quot;width:20%;background:#BDE7D6&quot;&gt;&lt;/i&gt;
+        &lt;div class=&quot;marker rev&quot; data-t=&quot;7000&quot; style=&quot;left:80%&quot;&gt;&lt;b&gt;80%&lt;/b&gt;&lt;/div&gt;
+      &lt;/div&gt;
+      &lt;div class=&quot;zticks&quot;&gt;&lt;span&gt;stop, email the team: 80% or less&lt;/span&gt;&lt;span style=&quot;text-align:right&quot;&gt;promote: above 80%&lt;/span&gt;&lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/section&gt;
+
+  &lt;!-- ============ PART 3: PROMOTE TO PROD ============ --&gt;
+  &lt;section class=&quot;scene&quot; data-scene=&quot;3&quot; data-dur=&quot;11500&quot;&gt;
+    &lt;div class=&quot;stitle rev&quot; data-t=&quot;0&quot;&gt;&lt;div class=&quot;k&quot;&gt;Part 3&lt;/div&gt;&lt;div class=&quot;h&quot;&gt;Promote to prod, then check it on prod data&lt;/div&gt;&lt;/div&gt;
+    &lt;svg class=&quot;wires&quot; viewBox=&quot;0 0 1280 720&quot;&gt;
+      &lt;path id=&quot;c1&quot; class=&quot;wire&quot; pathLength=&quot;1&quot; d=&quot;M 230 306 L 262 306&quot; data-t=&quot;900&quot;/&gt;
+      &lt;path id=&quot;c2&quot; class=&quot;wire hot&quot; pathLength=&quot;1&quot; d=&quot;M 452 306 L 484 306&quot; data-t=&quot;2400&quot;/&gt;
+      &lt;path id=&quot;c3&quot; class=&quot;wire&quot; pathLength=&quot;1&quot; d=&quot;M 674 306 L 706 306&quot; data-t=&quot;4000&quot;/&gt;
+      &lt;path id=&quot;c4&quot; class=&quot;wire&quot; pathLength=&quot;1&quot; d=&quot;M 896 306 L 928 306&quot; data-t=&quot;5400&quot;/&gt;
+      &lt;path id=&quot;c5&quot; class=&quot;wire&quot; pathLength=&quot;1&quot; d=&quot;M 1084 476 L 1084 364&quot; data-t=&quot;7200&quot;/&gt;
+      &lt;text class=&quot;wlabel&quot; x=&quot;1096&quot; y=&quot;430&quot; data-t=&quot;7300&quot;&gt;any time&lt;/text&gt;
+      &lt;circle class=&quot;pulse&quot; r=&quot;5&quot; data-t=&quot;2700&quot;&gt;&lt;animateMotion dur=&quot;1.0s&quot; repeatCount=&quot;indefinite&quot; begin=&quot;indefinite&quot;&gt;&lt;mpath href=&quot;#c2&quot;/&gt;&lt;/animateMotion&gt;&lt;/circle&gt;
+      &lt;circle class=&quot;pulse&quot; r=&quot;5&quot; data-t=&quot;7500&quot;&gt;&lt;animateMotion dur=&quot;1.4s&quot; repeatCount=&quot;indefinite&quot; begin=&quot;indefinite&quot;&gt;&lt;mpath href=&quot;#c5&quot;/&gt;&lt;/animateMotion&gt;&lt;/circle&gt;
+    &lt;/svg&gt;
+    &lt;div class=&quot;node ok rev&quot; data-t=&quot;300&quot; style=&quot;left:40px;top:248px;width:190px;height:116px&quot;&gt;
+      &lt;div class=&quot;ico&quot;&gt;&lt;svg viewBox=&quot;0 0 512 512&quot; fill=&quot;none&quot;&gt;&lt;rect x=&quot;96&quot; y=&quot;56&quot; width=&quot;320&quot; height=&quot;400&quot; rx=&quot;32&quot; fill=&quot;#FABFBA&quot;/&gt;&lt;path d=&quot;M150 170L190 210L262 138&quot; stroke=&quot;#FF5F46&quot; stroke-width=&quot;30&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;/&gt;&lt;rect x=&quot;290&quot; y=&quot;160&quot; width=&quot;80&quot; height=&quot;26&quot; rx=&quot;13&quot; fill=&quot;#fff&quot;/&gt;&lt;path d=&quot;M160 300L220 360M220 300L160 360&quot; stroke=&quot;#FF5F46&quot; stroke-width=&quot;30&quot; stroke-linecap=&quot;round&quot;/&gt;&lt;rect x=&quot;290&quot; y=&quot;318&quot; width=&quot;80&quot; height=&quot;26&quot; rx=&quot;13&quot; fill=&quot;#fff&quot;/&gt;&lt;/svg&gt;&lt;/div&gt;&lt;div&gt;&lt;div class=&quot;name&quot;&gt;Staging gate passed&lt;/div&gt;&lt;div class=&quot;desc&quot;&gt;The only way into prod&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;
+    &lt;div class=&quot;node db rev&quot; data-t=&quot;1000&quot; style=&quot;left:262px;top:248px;width:190px;height:116px&quot;&gt;
+      &lt;span class=&quot;badge&quot;&gt;main only&lt;/span&gt;
+      &lt;div class=&quot;ico&quot;&gt;&lt;svg viewBox=&quot;0 0 512 512&quot; fill=&quot;none&quot;&gt;&lt;path d=&quot;M112 48H320L400 128V440C400 454 390 464 376 464H112C98 464 88 454 88 440V72C88 58 98 48 112 48Z&quot; fill=&quot;#FABFBA&quot;/&gt;&lt;path d=&quot;M320 48V128H400Z&quot; fill=&quot;#FF5F46&quot;/&gt;&lt;rect x=&quot;144&quot; y=&quot;200&quot; width=&quot;200&quot; height=&quot;26&quot; rx=&quot;13&quot; fill=&quot;#FF5F46&quot;/&gt;&lt;rect x=&quot;144&quot; y=&quot;262&quot; width=&quot;160&quot; height=&quot;26&quot; rx=&quot;13&quot; fill=&quot;#fff&quot;/&gt;&lt;rect x=&quot;144&quot; y=&quot;324&quot; width=&quot;200&quot; height=&quot;26&quot; rx=&quot;13&quot; fill=&quot;#fff&quot;/&gt;&lt;rect x=&quot;144&quot; y=&quot;386&quot; width=&quot;120&quot; height=&quot;26&quot; rx=&quot;13&quot; fill=&quot;#fff&quot;/&gt;&lt;/svg&gt;&lt;/div&gt;&lt;div&gt;&lt;div class=&quot;name&quot;&gt;Plan&lt;/div&gt;&lt;div class=&quot;desc&quot;&gt;prod environment, optional approval&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;
+    &lt;div class=&quot;node db rev&quot; data-t=&quot;2500&quot; style=&quot;left:484px;top:248px;width:190px;height:116px&quot;&gt;
+      &lt;span class=&quot;badge on&quot;&gt;protected&lt;/span&gt;
+      &lt;div class=&quot;ico&quot;&gt;&lt;svg viewBox=&quot;0 0 512 512&quot; fill=&quot;none&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot;&gt;
+&lt;path d=&quot;M209.385 409.061C192.063 409.061 178.02 426.494 178.02 448H323.502C323.502 426.494 309.46 409.061 292.138 409.061H209.385Z&quot; fill=&quot;#FF5F46&quot;/&gt;
+&lt;path d=&quot;M459.812 206.815C428.864 256.533 382.402 324.948 361.655 342.503C340.909 360.058 310.141 391.703 238.824 391.703C188.862 391.703 145.885 359.614 126.81 313.595C126.811 313.648 126.811 313.703 126.812 313.756C124.109 307.041 117.538 302.298 109.855 302.297C99.7606 302.297 91.5767 310.481 91.5767 320.576C91.5769 322.945 92.0279 325.113 92.8485 327.047C97.2392 337.39 108.92 337.83 108.92 370.096C108.92 374.793 108.92 366.343 108.92 370.096C78.5784 370.096 53.9815 345.498 53.9809 315.157C53.9809 284.815 78.5781 260.218 108.92 260.218H116.288V260.208H203.559C210.079 260.208 216.337 262.969 220.41 268.059C227.547 276.978 233.017 285.281 237.048 292.133C240.783 298.481 251.969 298.543 255.667 292.173C259.566 285.456 264.744 277.343 271.309 268.619C275.386 263.201 281.863 260.208 288.644 260.208H321.094C368.515 260.208 394.508 237.472 407.78 221.085C414.648 212.606 424.403 206.815 435.315 206.815H459.812Z&quot; fill=&quot;#FABFBA&quot;/&gt;
+&lt;path d=&quot;M246.744 286.125C246.743 224.929 197.938 175.293 137.646 175.064C197.938 174.835 246.744 125.196 246.744 64C246.744 64 246.744 64 246.744 64C246.744 125.338 295.778 175.063 356.263 175.063C295.778 175.063 246.744 224.787 246.744 286.125Z&quot; fill=&quot;#FF5F46&quot;/&gt;
+&lt;/svg&gt;&lt;/div&gt;&lt;div&gt;&lt;div class=&quot;name&quot;&gt;Deploy the plan&lt;/div&gt;&lt;div class=&quot;desc&quot;&gt;prevent_destroy keeps the prod agent&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;
+    &lt;div class=&quot;node hero rev&quot; data-t=&quot;4100&quot; style=&quot;left:706px;top:248px;width:190px;height:116px&quot;&gt;
+      &lt;div class=&quot;ico&quot;&gt;&lt;svg viewBox=&quot;0 0 512 512&quot; fill=&quot;none&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot;&gt;
+&lt;path d=&quot;M209.385 409.061C192.063 409.061 178.02 426.494 178.02 448H323.502C323.502 426.494 309.46 409.061 292.138 409.061H209.385Z&quot; fill=&quot;#FF5F46&quot;/&gt;
+&lt;path d=&quot;M459.812 206.815C428.864 256.533 382.402 324.948 361.655 342.503C340.909 360.058 310.141 391.703 238.824 391.703C188.862 391.703 145.885 359.614 126.81 313.595C126.811 313.648 126.811 313.703 126.812 313.756C124.109 307.041 117.538 302.298 109.855 302.297C99.7606 302.297 91.5767 310.481 91.5767 320.576C91.5769 322.945 92.0279 325.113 92.8485 327.047C97.2392 337.39 108.92 337.83 108.92 370.096C108.92 374.793 108.92 366.343 108.92 370.096C78.5784 370.096 53.9815 345.498 53.9809 315.157C53.9809 284.815 78.5781 260.218 108.92 260.218H116.288V260.208H203.559C210.079 260.208 216.337 262.969 220.41 268.059C227.547 276.978 233.017 285.281 237.048 292.133C240.783 298.481 251.969 298.543 255.667 292.173C259.566 285.456 264.744 277.343 271.309 268.619C275.386 263.201 281.863 260.208 288.644 260.208H321.094C368.515 260.208 394.508 237.472 407.78 221.085C414.648 212.606 424.403 206.815 435.315 206.815H459.812Z&quot; fill=&quot;#FABFBA&quot;/&gt;
+&lt;path d=&quot;M246.744 286.125C246.743 224.929 197.938 175.293 137.646 175.064C197.938 174.835 246.744 125.196 246.744 64C246.744 64 246.744 64 246.744 64C246.744 125.338 295.778 175.063 356.263 175.063C295.778 175.063 246.744 224.787 246.744 286.125Z&quot; fill=&quot;#FF5F46&quot;/&gt;
+&lt;/svg&gt;&lt;/div&gt;&lt;div&gt;&lt;div class=&quot;name&quot;&gt;Prod agent&lt;/div&gt;&lt;div class=&quot;desc&quot;&gt;Business users ask in plain language&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;
+    &lt;div class=&quot;node db rev&quot; data-t=&quot;5500&quot; style=&quot;left:928px;top:248px;width:312px;height:116px&quot;&gt;
+      &lt;div class=&quot;ico&quot;&gt;&lt;svg viewBox=&quot;0 0 512 512&quot; fill=&quot;none&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot;&gt;
+&lt;path d=&quot;M220.408 401.342L362.785 257.242L220.408 113.143L220.408 56L299.582 56L299.582 136.544L314.387 142.792L370.291 85.8379L426.713 143.32L370.807 200.274L376.941 215.356H456.002V296.644H376.941L370.807 311.726L426.713 368.68L370.291 426.162L314.385 369.208L299.582 375.456L299.582 456H220.408L220.408 401.342Z&quot; fill=&quot;#FABFBA&quot;/&gt;
+&lt;path d=&quot;M156.584 100.984V100.722L308.78 256.001L156.584 411.281V411.004L141.711 426.159L85.2895 368.676L141.196 311.722L135.061 296.641H56V215.352H135.061L141.196 200.271L85.2895 143.317L141.711 85.8345L156.584 100.984Z&quot; fill=&quot;#FF5F46&quot;/&gt;
+&lt;/svg&gt;&lt;/div&gt;&lt;div&gt;&lt;div class=&quot;name&quot;&gt;Check on prod data&lt;/div&gt;&lt;div class=&quot;desc&quot;&gt;Same benchmarks after the deployment; emails the team if they fail&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;
+    &lt;div class=&quot;node ext rev&quot; data-t=&quot;7100&quot; style=&quot;left:928px;top:476px;width:312px;height:108px&quot;&gt;
+      &lt;div class=&quot;ico&quot;&gt;&lt;svg viewBox=&quot;0 0 512 512&quot; fill=&quot;none&quot;&gt;&lt;rect x=&quot;176&quot; y=&quot;176&quot; width=&quot;160&quot; height=&quot;160&quot; rx=&quot;24&quot; fill=&quot;#FF5F46&quot;/&gt;&lt;path d=&quot;M96 256C96 168 168 96 256 96C318 96 372 132 398 184&quot; stroke=&quot;#FABFBA&quot; stroke-width=&quot;34&quot; stroke-linecap=&quot;round&quot;/&gt;&lt;path d=&quot;M416 256C416 344 344 416 256 416C194 416 140 380 114 328&quot; stroke=&quot;#FABFBA&quot; stroke-width=&quot;34&quot; stroke-linecap=&quot;round&quot;/&gt;&lt;path d=&quot;M408 120V196H332&quot; stroke=&quot;#FF5F46&quot; stroke-width=&quot;30&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;/&gt;&lt;path d=&quot;M104 392V316H180&quot; stroke=&quot;#FF5F46&quot; stroke-width=&quot;30&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;/&gt;&lt;/svg&gt;&lt;/div&gt;&lt;div&gt;&lt;div class=&quot;name&quot;&gt;On demand&lt;/div&gt;&lt;div class=&quot;desc&quot;&gt;Run the benchmarks in dev, staging or prod; or add a schedule&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;
+  &lt;/section&gt;
+
+  &lt;div class=&quot;cap&quot;&gt;&lt;div class=&quot;bar&quot;&gt;&lt;/div&gt;&lt;div class=&quot;txt&quot; id=&quot;cap&quot;&gt;&lt;/div&gt;&lt;/div&gt;
+  &lt;div class=&quot;hint&quot;&gt;Space: pause &amp;nbsp; Left/Right: part&lt;/div&gt;
+&lt;/div&gt;&lt;/div&gt;
+
+&lt;script&gt;
+const CAPS = {
+  0: [[0, &#x27;Every change goes &lt;b&gt;dev, then staging, then prod&lt;/b&gt;, and reaches prod only when the benchmarks pass&#x27;]],
+  1: [[0, &#x27;A pull request changes the agent: instructions, example SQL or &lt;b&gt;benchmarks&lt;/b&gt;&#x27;],
+      [900, &#x27;Unit tests run first&#x27;],
+      [2000, &#x27;The bundle deploys &lt;b&gt;the agent and its 20 benchmarks&lt;/b&gt; to dev&#x27;],
+      [3600, &#x27;The &lt;b&gt;benchmark gate&lt;/b&gt; runs every question on dev data&#x27;],
+      [5200, &#x27;&lt;b&gt;Above 80%&lt;/b&gt;: the required check passes and the pull request can merge&#x27;],
+      [6800, &#x27;Otherwise the reasons are printed, &lt;b&gt;the team is emailed&lt;/b&gt;, and the merge is blocked&#x27;]],
+  2: [[0, &#x27;Merging to main starts the &lt;b&gt;release&lt;/b&gt;&#x27;],
+      [900, &#x27;First a &lt;b&gt;plan&lt;/b&gt;: what the deployment will change, kept for review&#x27;],
+      [2400, &#x27;Then the deployment applies &lt;b&gt;exactly that plan&lt;/b&gt; to staging&#x27;],
+      [4000, &#x27;The gate runs every benchmark on &lt;b&gt;staging data&lt;/b&gt;&#x27;],
+      [5600, &#x27;&lt;b&gt;Above 80%&lt;/b&gt;: the prod job starts&#x27;],
+      [7200, &#x27;Otherwise the &lt;b&gt;pipeline stops&lt;/b&gt;: reasons printed, team emailed, prod untouched&#x27;]],
+  3: [[0, &#x27;Inside the gate: the benchmarks come &lt;b&gt;from Git&lt;/b&gt;, with the agent&#x27;],
+      [2200, &#x27;The gate job starts an &lt;b&gt;eval run&lt;/b&gt;: Genie answers every question&#x27;],
+      [4600, &#x27;Accuracy is &lt;b&gt;correct answers divided by benchmarks&lt;/b&gt;&#x27;],
+      [6500, &#x27;A real failing run: &lt;b&gt;16 of 20 is 80%&lt;/b&gt;, which is not above 80%&#x27;],
+      [8000, &#x27;The report lists &lt;b&gt;each failing question and its reason&lt;/b&gt;, in CI and in the email&#x27;]],
+  4: [[0, &#x27;Prod is reached &lt;b&gt;only after the staging gate passed&lt;/b&gt;&#x27;],
+      [900, &#x27;Plan in the prod environment, &lt;b&gt;limited to main&lt;/b&gt;, with optional approval&#x27;],
+      [2400, &#x27;Deploy the plan; &lt;b&gt;prevent_destroy&lt;/b&gt; stops anything that would delete the prod agent&#x27;],
+      [4000, &#x27;Business users ask the &lt;b&gt;prod agent&lt;/b&gt;&#x27;],
+      [5400, &#x27;The same benchmarks then run on &lt;b&gt;prod data&lt;/b&gt;&#x27;],
+      [7100, &#x27;And &lt;b&gt;on demand&lt;/b&gt; at any time, or on a schedule if you add one&#x27;]]
+};
+const scenes = [...document.querySelectorAll(&#x27;.scene&#x27;)];
+const capEl = document.getElementById(&#x27;cap&#x27;);
+const MODE = new URLSearchParams(location.search).get(&#x27;mode&#x27;) || &#x27;auto&#x27;;
+let cur = -1, step = 0, timers = [], paused = false;
+
+function clearTimers(){ timers.forEach(clearTimeout); timers = []; }
+function setCap(html, instant){
+  if (instant){ capEl.innerHTML = html; capEl.style.opacity = 1; return; }
+  capEl.style.opacity = 0; setTimeout(() =&gt; { capEl.innerHTML = html; capEl.style.opacity = 1; }, 250);
+}
+function reveal(el){
+  el.classList.add(&#x27;on&#x27;);
+  if (el.tagName === &#x27;path&#x27; &amp;&amp; el.classList.contains(&#x27;wire&#x27;)) el.setAttribute(&#x27;marker-end&#x27;, &#x27;url(#&#x27; + (el.classList.contains(&#x27;hot&#x27;) ? &#x27;ah&#x27; : &#x27;ag&#x27;) + &#x27;)&#x27;);
+  const am = el.querySelector &amp;&amp; el.querySelector(&#x27;animateMotion&#x27;);
+  if (am) am.beginElement();
+}
+function reset(sc){
+  sc.querySelectorAll(&#x27;.rev,.wire,.wlabel,.pulse,.mk,.mk2&#x27;).forEach(e =&gt; { e.classList.remove(&#x27;on&#x27;); if (e.tagName === &#x27;path&#x27;) e.removeAttribute(&#x27;marker-end&#x27;); });
+}
+function pills(i){
+  document.querySelectorAll(&#x27;.pill&#x27;).forEach(p =&gt; {
+    const n = +p.dataset.p; p.classList.toggle(&#x27;cur&#x27;, n === i); p.classList.toggle(&#x27;done&#x27;, n &lt; i);
+  });
+}
+function enter(i){
+  clearTimers();
+  scenes.forEach(s =&gt; s.classList.remove(&#x27;show&#x27;));
+  const sc = scenes[i]; reset(sc); sc.classList.add(&#x27;show&#x27;); cur = i; pills(i);
+  return sc;
+}
+function bounds(i){ return (CAPS[i] || [[0, &#x27;&#x27;]]).map(c =&gt; c[0]); }
+function stepEls(sc, i, k){
+  const b = bounds(i), lo = b[k], hi = k + 1 &lt; b.length ? b[k + 1] : Infinity;
+  return [...sc.querySelectorAll(&#x27;[data-t]&#x27;)].filter(e =&gt; +e.dataset.t &gt;= lo &amp;&amp; +e.dataset.t &lt; hi).map(e =&gt; [e, +e.dataset.t - lo]);
+}
+
+/* auto mode: timed playback, loops */
+function show(i, staticMode){
+  const sc = enter(i);
+  const els = [...sc.querySelectorAll(&#x27;[data-t]&#x27;)];
+  if (staticMode){ els.forEach(reveal); const c = CAPS[i]; capEl.innerHTML = c[c.length-1][1]; return; }
+  els.forEach(e =&gt; timers.push(setTimeout(() =&gt; reveal(e), +e.dataset.t + 200)));
+  (CAPS[i] || []).forEach(([t, html]) =&gt; timers.push(setTimeout(() =&gt; setCap(html), t)));
+  timers.push(setTimeout(() =&gt; { if (!paused) show((i + 1) % scenes.length); }, +sc.dataset.dur));
+}
+
+/* presenter mode: one key press = one step */
+function present(i, k, animate){
+  const sc = (i !== cur || !animate) ? enter(i) : scenes[i];
+  clearTimers(); step = k;
+  if (!animate){
+    for (let j = 0; j &lt;= k; j++) stepEls(sc, i, j).forEach(([e]) =&gt; reveal(e));
+  } else {
+    // finish earlier steps instantly (a fast key press must not leave anything hidden), then animate this step
+    for (let j = 0; j &lt; k; j++) stepEls(sc, i, j).forEach(([e]) =&gt; { if (!e.classList.contains(&#x27;on&#x27;)) reveal(e); });
+    stepEls(sc, i, k).forEach(([e, d]) =&gt; timers.push(setTimeout(() =&gt; reveal(e), d + 150)));
+  }
+  setCap(CAPS[i][k][1], !animate);
+  progress();
+}
+function next(){
+  if (step + 1 &lt; bounds(cur).length) present(cur, step + 1, true);
+  else if (cur + 1 &lt; scenes.length) { enter(cur + 1); present(cur, 0, true); }
+}
+function prev(){
+  if (step &gt; 0) present(cur, step - 1, false);
+  else if (cur &gt; 0) present(cur - 1, bounds(cur - 1).length - 1, false);
+}
+function partName(i){
+  const p = document.querySelector(&#x27;.pill[data-p=&quot;&#x27; + i + &#x27;&quot;]&#x27;);
+  return p ? p.lastChild.textContent.trim() : &#x27;Part &#x27; + i;
+}
+function progress(){
+  const h = document.querySelector(&#x27;.hint&#x27;); if (!h || MODE !== &#x27;present&#x27;) return;
+  h.textContent = partName(cur) + &#x27;  &#x27; + (step + 1) + &#x27;/&#x27; + bounds(cur).length + &#x27;   ·   click a tab, or use the arrow keys&#x27;;
+}
+
+// arrow markers
+const svgns = &#x27;http://www.w3.org/2000/svg&#x27;;
+const defs = document.createElementNS(svgns, &#x27;svg&#x27;); defs.setAttribute(&#x27;width&#x27;, 0); defs.setAttribute(&#x27;height&#x27;, 0); defs.style.position = &#x27;absolute&#x27;;
+defs.innerHTML = &#x27;&lt;defs&gt;&lt;marker id=&quot;ag&quot; viewBox=&quot;0 0 10 10&quot; refX=&quot;10&quot; refY=&quot;5&quot; markerWidth=&quot;7&quot; markerHeight=&quot;7&quot; orient=&quot;auto-start-reverse&quot;&gt;&lt;path d=&quot;M0 0L10 5L0 10z&quot; fill=&quot;#CDD5DB&quot;/&gt;&lt;/marker&gt;&lt;marker id=&quot;ah&quot; viewBox=&quot;0 0 10 10&quot; refX=&quot;10&quot; refY=&quot;5&quot; markerWidth=&quot;7&quot; markerHeight=&quot;7&quot; orient=&quot;auto-start-reverse&quot;&gt;&lt;path d=&quot;M0 0L10 5L0 10z&quot; fill=&quot;#FF3621&quot;/&gt;&lt;/marker&gt;&lt;/defs&gt;&#x27;;
+document.body.prepend(defs);
+
+function fit(){ const s = Math.min(innerWidth / 1280, innerHeight / 720); document.getElementById(&#x27;stage&#x27;).style.transform = &#x27;scale(&#x27; + s + &#x27;)&#x27;; }
+addEventListener(&#x27;resize&#x27;, fit); fit();
+addEventListener(&#x27;keydown&#x27;, e =&gt; {
+  if (MODE === &#x27;present&#x27;){
+    if ([&#x27;ArrowRight&#x27;,&#x27;Space&#x27;,&#x27;PageDown&#x27;,&#x27;Enter&#x27;,&#x27;ArrowDown&#x27;].includes(e.code)){ e.preventDefault(); next(); }
+    if ([&#x27;ArrowLeft&#x27;,&#x27;PageUp&#x27;,&#x27;Backspace&#x27;,&#x27;ArrowUp&#x27;].includes(e.code)){ e.preventDefault(); prev(); }
+    if (/^Digit[0-9]$/.test(e.code) &amp;&amp; +e.code.slice(5) &lt; scenes.length) { const i = +e.code.slice(5); enter(i); present(i, bounds(i).length - 1, false); }
+    if (e.code === &#x27;Home&#x27;) { enter(0); present(0, 0, true); }
+    if (e.code === &#x27;KeyR&#x27;) { const i = cur; enter(i); present(i, 0, true); }
+    return;
+  }
+  if (e.code === &#x27;Space&#x27;){ paused = !paused; if (!paused) show(cur); }
+  if (e.code === &#x27;ArrowRight&#x27;) show((cur + 1) % scenes.length);
+  if (e.code === &#x27;ArrowLeft&#x27;) show((cur - 1 + scenes.length) % scenes.length);
+  if (/^Digit[0-9]$/.test(e.code) &amp;&amp; +e.code.slice(5) &lt; scenes.length) show(+e.code.slice(5));
+});
+if (MODE === &#x27;present&#x27;) addEventListener(&#x27;click&#x27;, next);
+// links open in a new tab without advancing the presentation
+document.querySelectorAll(&#x27;a.uclink&#x27;).forEach(a =&gt; a.addEventListener(&#x27;click&#x27;, e =&gt; e.stopPropagation()));
+// overview cards open their part
+document.querySelectorAll(&#x27;.blk[data-go]&#x27;).forEach(c =&gt; c.addEventListener(&#x27;click&#x27;, e =&gt; {
+  e.stopPropagation();
+  const i = +c.dataset.go;
+  if (MODE === &#x27;present&#x27;) { enter(i); present(i, bounds(i).length - 1, false); } else { paused = true; show(i, true); }
+}));
+// tabs: click to open a part immediately, fully shown
+document.querySelectorAll(&#x27;.pill&#x27;).forEach(p =&gt; p.addEventListener(&#x27;click&#x27;, e =&gt; {
+  e.stopPropagation();
+  const i = +p.dataset.p;
+  if (MODE === &#x27;present&#x27;) { enter(i); present(i, bounds(i).length - 1, false); }
+  else { paused = true; show(i, true); }
+}));
+const q = new URLSearchParams(location.search);
+if (q.has(&#x27;nohint&#x27;)) document.querySelector(&#x27;.hint&#x27;).style.display = &#x27;none&#x27;;
+const first = q.has(&#x27;scene&#x27;) ? +q.get(&#x27;scene&#x27;) : 0;
+if (MODE === &#x27;present&#x27;) { enter(first); present(first, 0, true); }
+else show(first, q.has(&#x27;static&#x27;));
+&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+"></iframe></div>
+<p class="anim-cap">It plays through the pull request, the release to staging, the benchmark gate and the promotion to prod; click a tab to open a part. Code, setup and the same diagram as a GIF: <a href="https://github.com/koritadenada/genie-agents-ci-cd">genie-agents-ci-cd</a>.</p>
 <h3>6.5 One front door across agents: Genie One</h3>
 <p>For organisations with many Genie Agents, <a href="https://docs.databricks.com/aws/en/genie-one/">Genie One</a> is the conversational entry point: it searches the available Genie Agents for one relevant to the question, and otherwise searches the data assets the user can access, citing its sources. Answers always run as the asking user, so Unity Catalog permissions, row filters and column masks apply.</p>
 <p>Keep agents few, focused and well described, and use domains and certification so Genie One routes well; the documentation notes that many overlapping agents reduce routing accuracy. To coordinate agents in code with custom routing, use the <a href="https://docs.databricks.com/aws/en/agents/custom-agents/agent-bricks-cli">Agent Bricks CLI</a>. The Agent Bricks Supervisor Agent is now a <a href="https://docs.databricks.com/aws/en/agents/legacy">legacy offering</a> and is not recommended for new systems.</p>
