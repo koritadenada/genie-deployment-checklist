@@ -1,0 +1,47 @@
+# Pull request: deploy the changed agent to dev and run its benchmarks.
+# Make "Genie benchmarks (dev)" a required status check on main, so a pull request cannot be merged
+# while accuracy is not above the threshold.
+name: Genie Agent pull request
+
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  id-token: write # GitHub OIDC token for Databricks workload identity federation
+  contents: read
+
+concurrency:
+  group: genie-dev
+  cancel-in-progress: false
+
+jobs:
+  benchmarks-dev:
+    name: Genie benchmarks (dev)
+    runs-on: ubuntu-latest
+    environment: dev
+    env:
+      DATABRICKS_AUTH_TYPE: github-oidc
+      DATABRICKS_HOST: ${{ vars.DATABRICKS_HOST }}
+      DATABRICKS_CLIENT_ID: ${{ vars.DATABRICKS_CLIENT_ID }}
+      BUNDLE_VAR_warehouse_id: ${{ vars.WAREHOUSE_ID }}
+      BUNDLE_VAR_alert_email: ${{ secrets.GENIE_ALERT_EMAIL }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: databricks/setup-cli@main
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install databricks-sdk
+
+      - name: Validate the bundle
+        run: databricks bundle validate -t dev
+
+      - name: Seed example data (example only)
+        run: python scripts/seed_demo_data.py --catalog dev --warehouse-id "$BUNDLE_VAR_warehouse_id"
+
+      - name: Deploy the agent and its benchmarks to dev
+        run: databricks bundle deploy -t dev
+
+      - name: Run benchmarks (fails below the threshold)
+        run: scripts/run_gate.sh dev

@@ -1,0 +1,62 @@
+# Genie Agent CI/CD example: one Genie Agent, three environments (dev, staging, prod)
+# and a benchmark gate that blocks promotion when accuracy is not above the threshold.
+#
+#   pull request  -> deploy to dev,     run the benchmarks, fail the check below the threshold
+#   merge to main -> deploy to staging, run the benchmarks, promote to prod only if they pass
+#
+# Workspace URL and credentials come from the environment (DATABRICKS_HOST, OIDC or a profile),
+# so the same bundle deploys to one workspace or to three.
+bundle:
+  name: genie-agent-cicd
+  engine: direct # Genie Agent resources (genie_spaces) need the direct deployment engine
+  databricks_cli_version: ">= 1.17.0"
+
+include:
+  - resources/*.yml
+
+variables:
+  catalog:
+    description: Catalog that holds the agent's tables in this environment
+  schema:
+    description: Schema that holds the agent's tables
+    default: genie_sales
+  warehouse_id:
+    description: SQL warehouse that runs the agent's queries (serverless recommended)
+  min_accuracy:
+    description: Benchmark accuracy (percent) the agent must exceed before it is promoted
+    default: 80
+  alert_email:
+    description: Who gets the email when the benchmark gate fails. CI sets it from the GENIE_ALERT_EMAIL secret.
+    default: ${workspace.current_user.userName}
+  agent_users_group:
+    description: Group that can ask the agent questions (CAN RUN) in staging and prod
+    default: users
+
+targets:
+  dev:
+    mode: development # resources get a "[dev <user>]" prefix, so every developer has a private copy
+    default: true
+    variables:
+      catalog: dev
+
+  staging:
+    mode: production
+    workspace: # one copy, owned by the deploying identity (the CI service principal)
+      root_path: /Workspace/Users/${workspace.current_user.userName}/.bundle/${bundle.name}/${bundle.target}
+    variables:
+      catalog: staging
+
+  prod:
+    mode: production
+    workspace:
+      root_path: /Workspace/Users/${workspace.current_user.userName}/.bundle/${bundle.name}/${bundle.target}
+    variables:
+      catalog: prod
+    resources:
+      jobs:
+        benchmark_gate:
+          # In prod the same benchmarks keep running weekly, so accuracy drift raises the same alert.
+          schedule:
+            quartz_cron_expression: "0 0 6 ? * MON"
+            timezone_id: Europe/Berlin
+            pause_status: UNPAUSED

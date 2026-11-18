@@ -1,0 +1,579 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Genie Agents Deployment Checklist</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Ccircle cx='12' cy='12' r='10' fill='%2300A972'/%3E%3Cpath d='M7.5 12.5l3 3 6-6.5' fill='none' stroke='white' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<style>
+:root{--navy:#0B2026;--ink:#1B3139;--ink2:#4A5F67;--muted:#6B7F86;--line:#DCE4E8;--bg:#F5F7F8;--card:#fff;--blue:#2272B4;--green:#00A972;--orange:#FFAB00;--lava:#FF3621;--maroon:#98102A}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;font:15px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;color:var(--ink);background:var(--bg)}
+a{color:var(--blue);text-decoration:none}
+svg.ic{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;flex:none}
+svg.ic.sm{width:15px;height:15px}
+.wrap{max-width:1240px;margin:0 auto;padding:0 28px}
+header.top{background:var(--navy);color:#fff;border-bottom:4px solid var(--lava)}
+.top .wrap{display:grid;grid-template-columns:1fr auto;gap:28px;align-items:center;padding-top:38px;padding-bottom:34px}
+.eyebrow{margin:0;text-transform:uppercase;letter-spacing:.14em;font-size:12px;font-weight:700;color:var(--orange)}
+h1{margin:6px 0 10px;font-size:36px;line-height:1.15;letter-spacing:-.01em}
+.lede{margin:0 0 20px;color:#C9D6DB;font-size:17px;max-width:720px}
+.actions{display:flex;flex-wrap:wrap;gap:10px}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:10px 16px;border-radius:10px;font:600 14px/1 inherit;cursor:pointer;border:1px solid transparent;text-decoration:none}
+.btn.primary{background:var(--lava);color:#fff}
+.btn.primary:hover{background:#E62E1A}
+.btn.ghost{background:transparent;color:#fff;border-color:rgba(255,255,255,.35)}
+.btn.ghost:hover{border-color:#fff}
+.ring{position:relative;width:132px;height:132px}
+.ring svg{width:132px;height:132px;transform:rotate(-90deg)}
+.ring circle{fill:none;stroke-width:10}
+.ring .bg{stroke:rgba(255,255,255,.14)}
+.ring .fg{stroke:var(--green);stroke-linecap:round;transition:stroke-dashoffset .4s}
+.ring .lbl{position:absolute;inset:0;display:grid;place-content:center;text-align:center}
+.ring b{font-size:28px;line-height:1}
+.ring small{color:#9FB3BA;font-size:12px;margin-top:4px}
+.bar{position:sticky;top:0;z-index:5;background:rgba(245,247,248,.94);backdrop-filter:blur(6px);border-bottom:1px solid var(--line)}
+.bar .wrap{display:flex;gap:14px;align-items:center;padding-top:10px;padding-bottom:10px;flex-wrap:wrap}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:9px;overflow:hidden;background:#fff}
+.seg button{all:unset;cursor:pointer;padding:6px 12px;font-size:13px;font-weight:600;color:var(--ink2)}
+.seg button.on{background:var(--navy);color:#fff}
+.tog{display:inline-flex;align-items:center;gap:8px;font-size:13px;color:var(--ink2);cursor:pointer;user-select:none}
+.tog input{accent-color:var(--green);width:16px;height:16px}
+.bar .sp{flex:1}
+.lnk{all:unset;cursor:pointer;display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:600;color:var(--ink2);padding:6px 10px;border-radius:8px}
+.lnk:hover{background:#fff;color:var(--navy)}
+.layout{display:grid;grid-template-columns:270px 1fr;gap:32px;padding-top:26px;padding-bottom:70px}
+nav.side{position:sticky;top:64px;align-self:start}
+nav.side a{display:grid;grid-template-columns:22px 1fr auto;gap:10px;align-items:center;padding:8px 10px;border-radius:9px;color:var(--ink);font-size:14px}
+nav.side a:hover{background:#fff}
+nav.side a.cur{background:#fff;box-shadow:0 1px 0 var(--line)}
+nav.side .pc{font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
+nav.side .pc.done{color:var(--green);font-weight:700}
+nav.side .ico{width:22px;height:22px;border-radius:6px;display:grid;place-items:center}
+nav.side .ico svg{width:14px;height:14px}
+.minibar{grid-column:2/4;height:3px;background:var(--line);border-radius:3px;overflow:hidden;margin-top:-2px}
+.minibar i{display:block;height:100%;background:var(--green);width:0;transition:width .3s}
+section.sec{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:24px 26px 10px;margin-bottom:22px;scroll-margin-top:70px}
+.sec-h{display:grid;grid-template-columns:auto 1fr auto;gap:14px;align-items:center;margin-bottom:6px}
+.sec-h .ico{width:42px;height:42px;border-radius:12px;display:grid;place-items:center}
+.sec-h .ico svg{width:22px;height:22px}
+.kick{font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.sec-h h2{margin:0;font-size:22px;line-height:1.2;color:var(--navy)}
+.sec-h .cnt{font-size:13px;font-weight:700;color:var(--ink2);font-variant-numeric:tabular-nums;background:var(--bg);border:1px solid var(--line);border-radius:999px;padding:4px 10px}
+.sec-h .cnt.done{color:#00704A;background:#E3F5EE;border-color:#9FDCC4}
+.intro{color:var(--ink2);margin:4px 0 14px}
+.grp{border-top:1px solid var(--line);padding:14px 0 8px}
+.grp-h{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:6px}
+.grp-h h3{margin:0;font-size:15px;color:var(--navy)}
+.grp-h .meta{font-size:12.5px;color:var(--muted)}
+.grp-h .gc{margin-left:auto;font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
+ul.items{list-style:none;margin:0;padding:0}
+li.it{display:grid;grid-template-columns:24px 1fr auto;gap:10px;align-items:start;padding:7px 8px;border-radius:9px}
+li.it:hover{background:#F8FAFB}
+li.it input{appearance:none;width:20px;height:20px;margin:1px 0 0;border:2px solid #B9C7CD;border-radius:6px;cursor:pointer;display:grid;place-items:center;background:#fff;transition:.15s}
+li.it input:checked{background:var(--green);border-color:var(--green)}
+li.it input:checked::after{content:"";width:10px;height:5px;border:2.5px solid #fff;border-top:0;border-right:0;transform:rotate(-45deg) translate(1px,-1px)}
+li.it label{cursor:pointer}
+li.it.done label{color:var(--muted);text-decoration:line-through;text-decoration-color:#C3CFD4}
+li.it.exit label::before{content:"Exit criterion";display:inline-block;font-size:10.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--maroon);background:#FCE9EC;border-radius:5px;padding:0 6px;margin-right:8px;vertical-align:1px}
+.tags{display:flex;gap:6px;align-items:center;white-space:nowrap}
+.tag{font-size:10.5px;font-weight:700;letter-spacing:.04em;padding:1px 7px;border-radius:999px}
+.tag.new{background:#E3F5EE;color:#00704A;border:1px solid #9FDCC4}
+.tag.st{background:#FFF4D9;color:#8A5A00;border:1px solid #F3D48A}
+.doc{display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:600;color:var(--blue);border:1px solid #CFE0EF;border-radius:7px;padding:2px 8px;background:#F4F9FD}
+.doc:hover{border-color:var(--blue)}
+.doc.ex{color:#00704A;border-color:#9FDCC4;background:#F2FBF7}
+.grp.new-grp .grp-h h3::after{content:"New";margin-left:8px;font-size:10.5px;font-weight:700;padding:1px 7px;border-radius:999px;background:#E3F5EE;color:#00704A;border:1px solid #9FDCC4;vertical-align:2px}
+.tracker{overflow-x:auto;border:1px solid var(--line);border-radius:12px;margin:6px 0 14px}
+.tracker table{border-collapse:collapse;width:100%;font-size:13.5px}
+.tracker th{background:#EEF3F5;text-align:left;padding:9px 10px;color:var(--navy);font-weight:700}
+.tracker td{border-top:1px solid var(--line);padding:6px 8px;vertical-align:middle}
+.tracker input,.tracker select{width:100%;font:inherit;font-size:13px;border:1px solid var(--line);border-radius:7px;padding:5px 7px;background:#fff;color:var(--ink)}
+.tracker td:first-child{font-weight:600;white-space:nowrap}
+.c-red{background:#FFE9E6;color:#E02E12}.c-blue{background:#E6F0F9;color:var(--blue)}.c-green{background:#E3F5EE;color:#00875A}.c-orange{background:#FFF4D9;color:#B57800}.c-navy{background:#E8ECEE;color:var(--navy)}
+body.only-new li.it:not(.isnew){display:none}
+body.only-new .grp:not(:has(li.isnew)){display:none}
+body.only-new section.sec:not(:has(li.isnew)){display:none}
+body.only-new .tracker{display:none}
+footer.ft{color:var(--muted);font-size:13px;padding:6px 0 40px}
+@media (max-width:900px){.layout{grid-template-columns:1fr}nav.side{position:static}.top .wrap{grid-template-columns:1fr}.ring{display:none}}
+@media print{.bar,nav.side,.actions,.ring{display:none!important}header.top{background:#fff;color:var(--ink);border-bottom:2px solid var(--lava)}.lede{color:var(--ink2)}.layout{display:block}section.sec{break-inside:avoid-page;border:0;padding:8px 0}body{background:#fff}.doc{border:0;padding:0}}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-bolt" viewBox="0 0 24 24"><path d="M13 3L5 13h6l-1 8 8-10h-6z"/></symbol>
+  <symbol id="i-route" viewBox="0 0 24 24"><circle cx="6" cy="18" r="2.5"/><circle cx="18" cy="6" r="2.5"/><path d="M8.5 18H15a3 3 0 000-6H9a3 3 0 010-6h6.5"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.8 2.8L16.5 9.5"/></symbol>
+  <symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.3"/></symbol>
+  <symbol id="i-db" viewBox="0 0 24 24"><ellipse cx="12" cy="6" rx="7" ry="3"/><path d="M5 6v12c0 1.7 3.1 3 7 3s7-1.3 7-3V6M5 12c0 1.7 3.1 3 7 3s7-1.3 7-3"/></symbol>
+  <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3l8 3v6c0 4.5-3.4 8.3-8 9-4.6-.7-8-4.5-8-9V6z"/><path d="M9 12l2 2 4-4"/></symbol>
+  <symbol id="i-users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><circle cx="17" cy="9" r="2.4"/><path d="M15.5 14.3A5 5 0 0121 19"/></symbol>
+  <symbol id="i-chart" viewBox="0 0 24 24"><path d="M4 20V4M4 20h16"/><path d="M8 16v-4M12 16V8M16 16v-6"/></symbol>
+  <symbol id="i-plug" viewBox="0 0 24 24"><path d="M9 3v5M15 3v5M6 8h12v3a6 6 0 01-12 0zM12 17v4"/></symbol>
+  <symbol id="i-down" viewBox="0 0 24 24"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></symbol>
+  <symbol id="i-git" viewBox="0 0 24 24"><circle cx="6" cy="6" r="2.2"/><circle cx="6" cy="18" r="2.2"/><circle cx="18" cy="9" r="2.2"/><path d="M6 8.2v7.6M18 11.2c0 3-3 4.3-9.8 5.4"/></symbol>
+  <symbol id="i-print" viewBox="0 0 24 24"><path d="M7 9V4h10v5M7 17H5a2 2 0 01-2-2v-4a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2h-2"/><path d="M7 14h10v6H7z"/></symbol>
+  <symbol id="i-reset" viewBox="0 0 24 24"><path d="M4 12a8 8 0 1 0 2.3-5.7L4 8.5M4 4v4.5h4.5"/></symbol>
+  <symbol id="i-ext" viewBox="0 0 24 24"><path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 01-1 1H5a1 1 0 01-1-1V7a1 1 0 011-1h5"/></symbol>
+</svg>
+
+<header class="top"><div class="wrap">
+  <div>
+    <p class="eyebrow">Databricks Genie</p>
+    <h1>Genie Agents Deployment Checklist</h1>
+    <p class="lede">Work through the steps from a validated Genie Agent to an enterprise rollout. It follows the Genie Agents Enterprise Deployment Guide, including Genie One, Domains, Pages, certification, bundles and MCP. Your progress is saved in this browser.</p>
+    <div class="actions">
+      <a class="btn primary" href="genie-deployment-guide.html" download="Genie-Agents-Enterprise-Deployment-Guide.html"><svg class="ic"><use href="#i-down"/></svg>Get Genie Deployment document</a>
+      <a class="btn ghost" href="https://github.com/koritadenada/genie-deployment-checklist/tree/main/cicd-example" target="_blank" rel="noopener"><svg class="ic"><use href="#i-git"/></svg>Genie Agent CI/CD pipeline</a>
+      <button class="btn ghost" onclick="window.print()"><svg class="ic"><use href="#i-print"/></svg>Print or save as PDF</button>
+    </div>
+  </div>
+  <div class="ring" aria-label="Overall progress">
+    <svg viewBox="0 0 120 120"><circle class="bg" cx="60" cy="60" r="50"/><circle class="fg" id="ring-fg" cx="60" cy="60" r="50" stroke-dasharray="314.16" stroke-dashoffset="314.16"/></svg>
+    <div class="lbl"><b id="ring-pct">0%</b><small id="ring-cnt">0 of 0 done</small></div>
+  </div>
+</div></header>
+
+<div class="bar"><div class="wrap">
+  <span class="tog">Documentation for</span>
+  <div class="seg" id="cloud"><button data-c="aws">AWS</button><button data-c="azure">Azure</button><button data-c="gcp">Google Cloud</button></div>
+  <label class="tog"><input type="checkbox" id="only-new"> Show only new items</label>
+  <span class="sp"></span>
+  <button class="lnk" id="reset"><svg class="ic sm"><use href="#i-reset"/></svg>Reset progress</button>
+</div></div>
+
+<div class="wrap layout">
+  <nav class="side" id="side"></nav>
+  <main id="main"></main>
+</div>
+<div class="wrap"><footer class="ft">Product details change quickly. Check the linked documentation for the current status of preview features (<span class="tag st">Beta</span>, <span class="tag st">Public Preview</span>). Items marked <span class="tag new">New</span> extend the original guide. Version: November 2026.</footer></div>
+
+<script>
+// Checklist content. Structure follows the Genie Agents Enterprise Deployment Guide.
+// d: doc path (resolved against the selected cloud), u: absolute URL, n: new item, s: preview status.
+window.CHECKLIST = [
+  {
+    key: "fs", title: "Fast Start", kicker: "Overview", icon: "i-bolt", color: "c-red",
+    intro: "Three essentials: get the foundations right, deliver agents iteratively, and sustain quality as adoption scales.",
+    groups: [
+      { title: "Part 1: Start solid with foundation checks", items: [
+        { id: "fs1", t: "Security sign-off, identity provisioning and user onboarding started early, as separate workstreams that run in parallel with agent development." },
+        { id: "fs2", t: "Each Success Pillar has an owner and a start date." },
+      ]},
+      { title: "Part 2: Fast delivery through empowered owners", items: [
+        { id: "fs3", t: "Agents are delivered in waves, domain by domain; each build targets 1 to 4 weeks from zero.", d: "genie-agents/best-practices" },
+        { id: "fs4", t: "Each agent stays on a small number of tables; when scope grows, a new agent is created instead." },
+      ]},
+      { title: "Part 3: The scale-out model", items: [
+        { id: "fs5", t: "Push left: data quality and metadata are fixed upstream in Unity Catalog, so every agent benefits." },
+        { id: "fs6", t: "Portfolio-level monitoring is set up early, with system tables and benchmarks rather than manual spot checks.", d: "genie-agents/monitor" },
+        { id: "fs7", t: "A community of practice shares patterns and a benchmark library and holds a quarterly agent health review." },
+        { id: "fs8", n: 1, t: "Model the head, let Genie learn the tail: top KPIs as metric views, key terms as Pages, assets grouped into Domains, trusted assets certified.", d: "genie/genie-ontology/" },
+      ]},
+    ],
+  },
+  {
+    key: "lc", title: "Deployment Lifecycle", kicker: "Phases P0 to P5", icon: "i-route", color: "c-navy",
+    intro: "Each phase builds on the previous one; some run in parallel. Meet the exit criteria before you move on.",
+    groups: [
+      { title: "P0 Discovery and assessment", meta: "2 to 3 weeks: discovery workshops, data readiness, stakeholders, success criteria, topology", items: [
+        { id: "lc1", t: "Use cases prioritised." },
+        { id: "lc2", t: "Data readiness assessed." },
+        { id: "lc3", t: "Stakeholder RACI finalised." },
+        { id: "lc4", t: "Success metrics agreed." },
+        { id: "lc5", n: 1, t: "Business domains identified; they become Domains on the Discover page.", d: "uc-semantics/domains" },
+      ]},
+      { title: "P1 Build and technical validation", meta: "2 to 4 weeks: data preparation, agent configuration, instruction curation, benchmark testing", items: [
+        { id: "lc6", t: "All tables have metadata and descriptions." },
+        { id: "lc7", t: "Benchmark accuracy of 80% or more for 1 to 2 weeks.", d: "genie-agents/monitor#benchmarks" },
+        { id: "lc8", t: "Sample questions added." },
+        { id: "lc9", t: "Knowledge Store configured.", d: "genie-agents/tune-quality" },
+        { id: "lc10", n: 1, t: "Top KPIs defined as metric views and key terms as Pages in the agent's domain.", d: "uc-semantics/pages" },
+      ]},
+      { title: "P2 Business user validation", meta: "1 to 2 weeks: onboard 5 power users, collect structured feedback, iterate", items: [
+        { id: "lc11", t: "Power users sign off." },
+        { id: "lc12", t: "Evaluation scorecard meets thresholds." },
+        { id: "lc13", t: "Critical feedback addressed." },
+      ]},
+      { title: "P3 Access and consumption setup", meta: "1 to 2 weeks, in parallel with P2: permissions, identity provisioning, consumption channels", items: [
+        { id: "lc14", t: "All target users are correctly entitled." },
+        { id: "lc15", t: "Consumption channels tested end to end." },
+      ]},
+      { title: "P4 Monitoring and onboarding setup", meta: "In parallel: monitoring dashboards, alerts, user guide, feedback process", items: [
+        { id: "lc16", t: "Monitoring operational." },
+        { id: "lc17", t: "Alerts configured." },
+        { id: "lc18", t: "User documentation published." },
+        { id: "lc19", n: 1, t: "Genie budgets and cost monitoring in place.", d: "genie/budgets" },
+      ]},
+      { title: "P5 Staged rollout", meta: "4 to 8 weeks: 10 users, then 50, then 200, then enterprise-wide", items: [
+        { id: "lc20", t: "At each stage, usage is monitored, feedback reviewed and instructions iterated." },
+        { id: "lc21", t: "System performance confirmed before expanding to the next stage." },
+      ]},
+    ],
+  },
+  {
+    key: "tc", title: "Technical Onboarding Checklist", kicker: "Per agent", icon: "i-check", color: "c-green", tracker: true,
+    intro: "Takes one validated Genie Agent into production. Assumes Phase 0, Discovery and Assessment, is done. Track each phase with an owner and a due date.",
+    groups: [
+      { title: "Phase 1: Technical user validation", meta: "Agent editors use the agent themselves, adjust the context and rerun benchmarks", items: [
+        { id: "tc1", t: "A limited number of tables: five or fewer recommended, 50 at most.", d: "genie-agents/best-practices#start-small" },
+        { id: "tc2", t: "Primary and foreign keys set; table and column names and descriptions are clear and precise." },
+        { id: "tc3", t: "Entity matching on for categorical columns, so \"Florida\" finds \"FL\". Tables with row filters are skipped by prompt matching: add a small unfiltered lookup table if users need it.", d: "genie-agents/tune-quality#prompt-matching-overview" },
+        { id: "tc4", t: "Example SQL for the most common question types (10 or more), parameterised where possible; SQL expressions preferred over text instructions.", d: "genie-agents/tune-quality#add-example-sql-queries-and-functions" },
+        { id: "tc5", t: "Instructions limited to business terms, specific behaviours and global rules that metadata and SQL cannot express.", d: "genie-agents/best-practices#choose-the-right-instruction-type" },
+        { id: "tc6", t: "Benchmarks cover the top 15 to 20 questions with 2 to 4 phrasings each (about 30 to 80); seeded with auto-suggested benchmarks.", d: "genie-agents/monitor#benchmarks" },
+        { id: "tc7", n: 1, t: "Metric views used by the agent carry agent metadata: display names, synonyms and formats.", d: "uc-semantics/agent-metadata" },
+        { id: "tc8", n: 1, t: "The agent and the gold tables and metric views it uses are certified; legacy assets are deprecated.", d: "data-governance/unity-catalog/certify-deprecate-data" },
+        { id: "tc9", n: 1, t: "The agent definition, including its benchmarks, is in Git and deploys with a bundle.", d: "dev-tools/bundles/resources#genie_space" },
+        { id: "tc10", exit: 1, t: "Exit: benchmarks at about 80% accuracy over 1 to 2 weeks." },
+        { id: "tc11", exit: 1, t: "Exit: agent editors have used the agent for 1 to 2 weeks." },
+      ]},
+      { title: "Phase 2: Business user validation", meta: "About 5 power users, with temporary access and the right permissions", items: [
+        { id: "tc12", t: "Power users have tested consistently for 1 to 2 weeks and are satisfied with the answers.", d: "genie-agents/set-up#share-a-genie-agent" },
+        { id: "tc13", t: "Changes follow the Phase 1 practices; a major change restarts the 1 to 2 week test period." },
+        { id: "tc14", exit: 1, t: "Exit: 1 to 2 weeks of testing without major changes (can run in parallel with Phases 3 and 4)." },
+      ]},
+      { title: "Phase 3: Access and consumption layer", meta: "Can start in parallel with Phase 2", items: [
+        { id: "tc15", t: "Consumption channel chosen and built: Genie One, the Genie Agent UI, dashboards, an app through the Conversation API, Slack or Teams.", d: "genie-one/" },
+        { id: "tc16", t: "Basic permissions in place for consuming users: SELECT on the data and CAN RUN on the agent.", d: "genie-agents/set-up#share-a-genie-agent" },
+        { id: "tc17", t: "Credential model defined: viewer or embedded credentials; for the API, OAuth instead of a shared token." },
+        { id: "tc18", t: "Identity provisioning in place: automatic identity management (Azure) or SCIM." },
+        { id: "tc19", t: "Users without workspace access reach the account-level Genie One with consumer access." , d: "ai-bi/consumers" },
+        { id: "tc20", n: 1, t: "Custom URL and branded Genie One homepage with pinned agents and dashboards.", d: "genie-one/customize-genie-homepage" },
+        { id: "tc21", n: 1, s: "Beta", t: "Account-only users considered for people who only need Genie One.", d: "genie-one/account-only-user-access" },
+        { id: "tc22", exit: 1, t: "Exit: the way business users interact with Genie is defined and built." },
+      ]},
+      { title: "Phase 4: Onboarding and monitoring processes", meta: "Can start in parallel with Phase 2", items: [
+        { id: "tc23", t: "SQL warehouse monitoring ensures SLAs are met." },
+        { id: "tc24", t: "A schedule for answering review requests.", d: "genie-agents/monitor#response-feedback" },
+        { id: "tc25", t: "Genie audit events monitored, with alerts on spikes in conversations and users.", d: "genie-agents/audits-alerts" },
+        { id: "tc26", t: "Weekly monitoring digest in the agent's Monitoring tab, or an adoption dashboard." },
+        { id: "tc27", t: "Process defined for new users to request access." },
+        { id: "tc28", n: 1, t: "Genie budgets set (account, workspace or per user) and Genie cost monitored.", d: "genie/monitor-cost" },
+        { id: "tc29", exit: 1, t: "Exit: internal user guide published: scope, how to request access, how to use Genie, feedback cadence.", d: "genie-agents/talk-to-genie" },
+        { id: "tc30", exit: 1, t: "Exit: alerts notify the admin team when the SQL warehouse breaks its SLAs." },
+        { id: "tc31", exit: 1, t: "Exit: alerts notify the admin team when usage approaches budgets." },
+      ]},
+      { title: "Phase 5: Staged rollout", meta: "Only move to the next stage when the agent has not changed; otherwise wait a few days", items: [
+        { id: "tc32", t: "Target end state defined: number of users and expected peak concurrency." },
+        { id: "tc33", t: "T0: 10 users." },
+        { id: "tc34", t: "T0 plus 2 to 3 weeks: 50 users." },
+        { id: "tc35", t: "T0 plus 3 to 4 weeks: 200 users; then grow in larger steps." },
+        { id: "tc36", t: "Warehouse size and autoscaling adjusted as load grows.", d: "compute/sql-warehouse/warehouse-behavior#sizing-a-serverless-sql-warehouse" },
+        { id: "tc37", t: "Admin team staffed for the growing number of review requests." },
+        { id: "tc38", t: "API clients retry with exponential backoff: there are no fixed per-minute caps since pay-as-you-go, but shared capacity can return temporary 429s.", d: "genie-agents/conversation-api#best-practices-and-limits" },
+      ]},
+    ],
+  },
+  {
+    key: "p1", title: "1. Business Scope and Agent Design", kicker: "Pillar 1", icon: "i-target", color: "c-blue",
+    intro: "Five or fewer tables per agent, a clear owner, 20 to 50 in-scope questions, trusted assets for critical KPIs.",
+    groups: [
+      { title: "1.1 Design principles", items: [
+        { id: "p1a", t: "Audience defined." },
+        { id: "p1b", t: "20 to 50 business questions the agent should answer, written down." },
+        { id: "p1c", t: "KPIs and datasets the agent owns listed." },
+        { id: "p1d", t: "Out-of-scope topics stated in the agent instructions." },
+        { id: "p1e", t: "Sized by audience: executive agents 2 to 3 summary tables, domain analyst agents 3 to 5 detailed tables." },
+        { id: "p1f", t: "First 10 to 20 questions validated against expected SQL and answers before widening the audience." },
+        { id: "p1g", t: "Operating model: owner, backlog, release cadence, support model, success metrics." },
+      ]},
+      { title: "1.2 Curation hierarchy (most structural layer first)", items: [
+        { id: "p1h", t: "Unity Catalog metadata: descriptions, keys and tags." },
+        { id: "p1i", t: "Metric views for KPIs shared across agents.", d: "uc-semantics/metric-views" },
+        { id: "p1j", t: "SQL expressions for measures, filters and dimensions.", d: "genie-agents/tune-quality#define-sql-expressions" },
+        { id: "p1k", t: "Parameterised example SQL for common question patterns." },
+        { id: "p1l", t: "Text instructions last, for formatting, scope and clarification." },
+      ]},
+      { title: "1.3 Knowledge Store", items: [
+        { id: "p1m", t: "Agent-level descriptions, business terms and synonyms.", d: "genie-agents/tune-quality" },
+        { id: "p1n", t: "Prompt matching examples and join relationships defined.", d: "genie-agents/tune-quality#define-join-relationships" },
+        { id: "p1o", t: "Curated SQL expressions in place." },
+      ]},
+      { title: "1.4 Sample questions", items: [
+        { id: "p1p", t: "6 to 10 literal sample questions that use the agent's real metrics and entities and mirror its trusted assets." },
+      ]},
+      { title: "1.5 Modeled knowledge", isNew: 1, items: [
+        { id: "p1q", n: 1, t: "A Domain for the agent's business area, with subdomains if needed.", d: "uc-semantics/domains" },
+        { id: "p1r", n: 1, t: "Key terms and KPIs defined as Pages: owner, synonyms, description, related assets and sources.", d: "uc-semantics/pages" },
+        { id: "p1s", n: 1, t: "The agent, its metric views and gold tables certified.", d: "data-governance/unity-catalog/certify-deprecate-data" },
+        { id: "p1t", n: 1, s: "Beta", t: "Wikis for the most used tables: meaning, intended use and sources.", d: "uc-semantics/wikis" },
+        { id: "p1u", n: 1, s: "Beta", t: "BI semantic models (such as Power BI) connected as external knowledge, if you have them.", d: "genie/genie-ontology/external-knowledge-sources/" },
+      ]},
+    ],
+  },
+  {
+    key: "p2", title: "2. Data Foundation", kicker: "Pillar 2", icon: "i-db", color: "c-orange",
+    intro: "Curated silver and gold tables in Unity Catalog, every column described, entity matching on categorical columns.",
+    groups: [
+      { title: "2.1 Data layer", items: [
+        { id: "p2a", t: "No raw or bronze tables; silver tables only when cleaned; gold preferred." },
+      ]},
+      { title: "2.2 Per table: must have", items: [
+        { id: "p2b", t: "Registered in Unity Catalog." },
+        { id: "p2c", t: "Table comment with contents and business context." },
+        { id: "p2d", t: "A business description for every column." },
+        { id: "p2e", t: "Self-explanatory column names (customer_lifetime_value, not clv)." },
+        { id: "p2f", t: "Dates stored as DATE or TIMESTAMP, not strings." },
+      ]},
+      { title: "2.2 Per table: should and good to have", items: [
+        { id: "p2g", t: "Primary and foreign keys defined." },
+        { id: "p2h", t: "Governed tags for PII and sensitivity." },
+        { id: "p2i", t: "OPTIMIZE run, unless predictive optimisation is on.", d: "optimizations/predictive-optimization" },
+        { id: "p2j", t: "Data freshness cadence documented." },
+      ]},
+      { title: "2.2 Per agent", items: [
+        { id: "p2k", t: "Unity Catalog permissions on the data and agent permissions on the agent." },
+        { id: "p2l", t: "Five or fewer tables where possible; 50 tables, views or metric views at most." },
+        { id: "p2m", t: "Frequently joined tables pre-joined into views, or joins defined in the Knowledge Store." },
+        { id: "p2n", t: "Entity matching on categorical columns; format assistance on important columns.", d: "genie-agents/tune-quality#manage-format-assistance" },
+        { id: "p2o", t: "Unnecessary or confusing columns hidden.", d: "genie-agents/tune-quality#hide-or-show-relevant-columns" },
+      ]},
+      { title: "2.3 Metric views", items: [
+        { id: "p2p", t: "Shared KPIs defined once as metric views.", d: "uc-semantics/metric-views" },
+        { id: "p2q", n: 1, t: "Agent metadata on each metric view: display names, synonyms, formats.", d: "uc-semantics/agent-metadata" },
+      ]},
+      { title: "2.4 Data quality gates", items: [
+        { id: "p2r", t: "Completeness: nulls in critical columns under the agreed threshold." },
+        { id: "p2s", t: "Freshness: refreshes on the documented schedule." },
+        { id: "p2t", t: "Accuracy: benchmark results match trusted reports." },
+        { id: "p2u", t: "Schema stability: change management for breaking changes." },
+        { id: "p2v", t: "Performance: tables optimised for the expected workload." },
+      ]},
+      { title: "2.5 Discoverability and trust signals", isNew: 1, items: [
+        { id: "p2w", n: 1, t: "Curated schemas and tables tagged into their domain, so they appear under the right business area.", d: "uc-semantics/domains" },
+        { id: "p2x", n: 1, t: "Gold tables and metric views certified; the legacy tables they replace deprecated.", d: "data-governance/unity-catalog/certify-deprecate-data" },
+        { id: "p2y", n: 1, t: "On workspaces with the compliance security profile, the Discover page enabled by a workspace admin.", d: "discover/discover-page" },
+      ]},
+    ],
+  },
+  {
+    key: "p3", title: "3. Governance and Security", kicker: "Pillar 3", icon: "i-shield", color: "c-green",
+    intro: "Unity Catalog permissions, row filters and column masks enforced per user; the credential model documented for each deployment pattern.",
+    groups: [
+      { title: "3.3.3 Access configuration", items: [
+        { id: "p3a", t: "Unity Catalog permissions reviewed for every agent table." },
+        { id: "p3b", t: "Row filters applied where needed (region, department).", d: "tables/row-and-column-filters" },
+        { id: "p3c", t: "Column masks applied to sensitive data (PII, compensation)." },
+        { id: "p3d", t: "Agent permissions set: CAN MANAGE for owners, CAN RUN for users, CAN VIEW for viewers." },
+        { id: "p3e", t: "Audit logging enabled and reviewed.", d: "ai-bi/admin/audit" },
+        { id: "p3f", t: "Dashboard dataset scope reviewed for companion agents." },
+        { id: "p3g", t: "Credential model documented for each deployment pattern." },
+        { id: "p3h", t: "Consumer access configured for business users.", d: "ai-bi/consumers" },
+      ]},
+      { title: "3.3.2 Onboarding business users", items: [
+        { id: "p3i", t: "Users provisioned at account level with automatic identity management." },
+        { id: "p3j", t: "Users assigned to the workspace with consumer access." },
+        { id: "p3k", t: "Optional custom URL for a simpler login.", d: "admin/account-settings/custom-url" },
+      ]},
+      { title: "3.4 Compliance: validate with your teams", items: [
+        { id: "p3l", t: "Cross-Geo processing setting matches your requirements.", d: "resources/databricks-geos" },
+        { id: "p3m", t: "Conversation history retention and customer-managed keys reviewed.", d: "security/keys/customer-managed-keys" },
+        { id: "p3n", t: "Partner-powered AI features enablement decided.", d: "databricks-ai/partner-powered" },
+        { id: "p3o", t: "Regulated data, residency and AI usage policy reviewed with security, legal and compliance.", d: "databricks-ai/databricks-ai-trust" },
+        { id: "p3p", t: "SQL results download setting decided." },
+      ]},
+      { title: "3.5 Ownership", items: [
+        { id: "p3q", t: "Agent owner named (senior analyst or data product owner)." },
+        { id: "p3r", t: "Data steward, security reviewer and feedback reviewer named." },
+      ]},
+      { title: "3.6 Domains, Pages and certification", isNew: 1, items: [
+        { id: "p3s", n: 1, t: "Curators named: MANAGE DISCOVER for all domains, or MANAGE DOMAIN per domain.", d: "uc-semantics/domains" },
+        { id: "p3t", n: 1, t: "Page managers named with MANAGE PAGES.", d: "uc-semantics/pages" },
+        { id: "p3u", n: 1, t: "Data stewards have ASSIGN on the system.certification_status tag.", d: "data-governance/unity-catalog/certify-deprecate-data" },
+        { id: "p3v", n: 1, t: "No PII or regulated data in Pages: they are account-level and may be replicated globally." },
+        { id: "p3w", n: 1, t: "Service-principal integrations reviewed: they are billed, users are free through January 31, 2027.", d: "genie/monitor-cost" },
+        { id: "p3x", n: 1, s: "Beta", t: "Front-end private connectivity for account-level Genie One, if required.", d: "security/network/front-end/front-end-private-connect-account" },
+      ]},
+    ],
+  },
+  {
+    key: "p4", title: "4. Enablement and Change Management", kicker: "Pillar 4", icon: "i-users", color: "c-orange",
+    intro: "Authors trained, sample questions and a prompt guide published, feedback loop active, common objections answered.",
+    groups: [
+      { title: "4.1 Stakeholder engagement", items: [
+        { id: "p4a", t: "Executive demo on your own data." },
+        { id: "p4b", t: "Technical deep dive for data platform leaders." },
+        { id: "p4c", t: "Hands-on workshop for agent authors on their own data." },
+        { id: "p4d", t: "30-minute introduction and guided first use for business users." },
+        { id: "p4e", t: "Security architecture review with IT and security." },
+      ]},
+      { title: "4.2 Training", items: [
+        { id: "p4f", t: "Authors trained: fundamentals, data preparation, configuration, trusted responses, benchmarking, monitoring.", u: "https://www.databricks.com/training/catalog/aibi-for-data-analysts-3707" },
+        { id: "p4g", t: "Business users trained: getting started, asking good questions, reading responses, giving feedback." },
+      ]},
+      { title: "4.3 and 4.4 Prompt guide and trust", items: [
+        { id: "p4h", t: "Prompt guide per agent: good question patterns, tips, out-of-scope topics." },
+        { id: "p4i", t: "Trusted assets for critical KPIs, so users see the Trusted badge.", d: "genie-agents/tune-quality#trusted-assets" },
+        { id: "p4j", t: "Answers to common objections prepared (trust, job impact, existing dashboards, data quality, maintenance, data outside Databricks)." },
+      ]},
+      { title: "4.5 Adoption metrics tracked", items: [
+        { id: "p4k", t: "Trained authors, active users, agents in production and weekly active users." },
+        { id: "p4l", t: "Benchmark accuracy and positive feedback rate." },
+      ]},
+      { title: "4.6 Help users find the right answer", isNew: 1, items: [
+        { id: "p4m", n: 1, t: "Genie One promoted as the front door, with a branded homepage.", d: "genie-one/customize-genie-homepage" },
+        { id: "p4n", n: 1, t: "Discover page and domain layouts curated for business users.", d: "discover/discover-page" },
+        { id: "p4o", n: 1, t: "Key Pages linked from the prompt guide as the shared glossary." },
+        { id: "p4p", n: 1, t: "Genie One available where people work: Slack, Microsoft Teams, mobile.", d: "genie-one/genie-slack" },
+      ]},
+    ],
+  },
+  {
+    key: "p5", title: "5. Monitoring and Continuous Improvement", kicker: "Pillar 5", icon: "i-chart", color: "c-red",
+    intro: "At least 80% benchmark accuracy before production, the Monitor tab reviewed on schedule, audit-log alerts configured.",
+    groups: [
+      { title: "5.4 Continuous improvement", items: [
+        { id: "p5a", t: "Monitor tab reviewed on schedule.", d: "genie-agents/monitor" },
+        { id: "p5b", t: "Audit-log alerts configured with Databricks SQL alerts on system.access.audit.", d: "genie-agents/audits-alerts" },
+        { id: "p5c", t: "Benchmark rerun schedule established." },
+        { id: "p5d", t: "Feedback-to-curation loop documented and active: capture, triage, curate, validate, apply." },
+        { id: "p5e", t: "Curation change log maintained." },
+        { id: "p5f", t: "Quarterly agent health review scheduled." },
+      ]},
+      { title: "5.3 Benchmarks", items: [
+        { id: "p5g", t: "Benchmarks rerun after every significant change; accuracy trends upward." },
+        { id: "p5h", t: "No promotion to production below 80% accuracy." },
+        { id: "p5i", t: "Categories covered: simple aggregations, time-based, filtered, multi-table joins, top-N, complex business logic." },
+      ]},
+      { title: "5.4.1 Review cycle", items: [
+        { id: "p5j", t: "Weekly: new question patterns, negative feedback, unanswered questions." },
+        { id: "p5k", t: "Every two weeks: new trusted assets, entity matching updates, review requests." },
+        { id: "p5l", t: "Monthly: full benchmark suite, accuracy trends, trusted-asset coverage." },
+        { id: "p5m", t: "Quarterly: full audit, data freshness and schema changes, scope review." },
+      ]},
+      { title: "5.5 Automate quality and cost checks", isNew: 1, items: [
+        { id: "p5n", n: 1, s: "Beta", t: "Benchmarks run in CI through the API and block promotion below the threshold. See the CI/CD example.", d: "dev-tools/cli/reference/genie-commands", ex: "cicd-example/" },
+        { id: "p5o", n: 1, t: "Failing benchmarks diagnosed with Genie Code.", d: "genie-agents/monitor#analyze-a-benchmark-run-with-genie-code" },
+        { id: "p5p", n: 1, t: "Genie cost monitored, with budgets per account, workspace or user.", d: "genie/budgets" },
+        { id: "p5q", n: 1, t: "Genie Ontology readiness assessed each quarter.", u: "https://github.com/databricks-solutions/genie-ontology-readiness" },
+      ]},
+    ],
+  },
+  {
+    key: "p6", title: "6. Integration and Embedding", kicker: "Pillar 6, optional", icon: "i-plug", color: "c-blue",
+    intro: "Throughput planned on observed demand, minimum-privilege identities for integrations, channels matched to the audience.",
+    groups: [
+      { title: "6.1 and 6.2 Channels", items: [
+        { id: "p6a", t: "Validate in the Genie Agent UI and dashboard companion first." },
+        { id: "p6b", t: "Broad rollout through Genie One with consumer access, once the agent is production quality.", d: "genie-one/" },
+        { id: "p6c", t: "Slack, Teams or custom integrations only for specific needs, after the agent is production quality.", d: "integrations/msft-teams" },
+      ]},
+      { title: "6.3 Conversation API", items: [
+        { id: "p6d", t: "OAuth M2M for server-side apps or OAuth U2M for user flows; minimum-privilege identity documented.", d: "dev-tools/auth/oauth-m2m" },
+        { id: "p6e", t: "Poll every 1 to 5 seconds with exponential backoff up to one minute; stop after about 10 minutes.", d: "genie-agents/conversation-api#best-practices-and-limits" },
+        { id: "p6f", t: "A new conversation per user session; old and test conversations cleaned up (200,000 per agent)." },
+        { id: "p6g", t: "Queuing, retries and logging in the calling application; charts rendered in your own UI." },
+        { id: "p6h", t: "Agent curated and benchmarked before it is exposed through the API." },
+      ]},
+      { title: "6.4 Environment promotion", items: [
+        { id: "p6i", n: 1, t: "Agent deployed with the bundle genie_spaces resource from Git, dev to staging to prod.", d: "dev-tools/bundles/resources#genie_space", ex: "cicd-example/" },
+        { id: "p6j", t: "Separate catalogs for dev, staging and production data." },
+        { id: "p6k", t: "Benchmarks rerun before every promotion.", ex: "cicd-example/" },
+      ]},
+      { title: "6.5 One front door across agents", isNew: 1, items: [
+        { id: "p6l", n: 1, t: "Genie One as the entry point across agents: it finds a matching agent, otherwise searches data assets.", d: "genie-one/chat" },
+        { id: "p6m", n: 1, t: "Agents kept few, focused and well described, so routing stays accurate." },
+        { id: "p6n", n: 1, t: "Custom routing only where needed, with the Agent Bricks CLI (Supervisor Agent is legacy).", d: "agents/custom-agents/agent-bricks-cli" },
+      ]},
+      { title: "6.6 Throughput", items: [
+        { id: "p6o", t: "Pilot cohort measured; peak queries per minute observed over at least 30 days." },
+        { id: "p6p", t: "Capacity sized on observed traffic, scaled as adoption grows; dedicated capacity through the account team if needed." },
+      ]},
+      { title: "6.7 AI assistants and MCP", isNew: 1, items: [
+        { id: "p6q", n: 1, t: "Genie One MCP for AI assistants and coding agents across your governed data.", d: "agents/mcp-tools/genie-mcp" },
+        { id: "p6r", n: 1, s: "Public Preview", t: "Genie Agent MCP to expose one curated agent as a tool.", d: "agents/mcp-tools/genie-agent" },
+      ]},
+    ],
+  },
+];
+
+(function () {
+  const BASE = { aws: "https://docs.databricks.com/aws/en/", azure: "https://learn.microsoft.com/en-us/azure/databricks/", gcp: "https://docs.databricks.com/gcp/en/" };
+  const KEY = "genie-deployment-checklist-v1";
+  const CICD = "https://github.com/koritadenada/genie-deployment-checklist/tree/main/cicd-example";
+  const state = Object.assign({ done: {}, tracker: {}, cloud: "aws", onlyNew: false }, JSON.parse(localStorage.getItem(KEY) || "{}"));
+  const save = () => localStorage.setItem(KEY, JSON.stringify(state));
+  const esc = (t) => String(t).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+  const S = window.CHECKLIST;
+  const all = S.flatMap((s) => s.groups.flatMap((g) => g.items));
+
+  function docUrl(it) { return it.u ? it.u : BASE[state.cloud] + it.d; }
+  function itemHtml(it) {
+    const tags = [];
+    if (it.n) tags.push('<span class="tag new">New</span>');
+    if (it.s) tags.push('<span class="tag st">' + esc(it.s) + "</span>");
+    if (it.ex) tags.push('<a class="doc ex" target="_blank" rel="noopener" href="' + CICD + '">Example<svg class="ic sm"><use href="#i-ext"/></svg></a>');
+    if (it.d || it.u) tags.push('<a class="doc" target="_blank" rel="noopener" data-doc="' + esc(it.d || "") + '" href="' + esc(docUrl(it)) + '">Docs<svg class="ic sm"><use href="#i-ext"/></svg></a>');
+    return '<li class="it' + (it.n ? " isnew" : "") + (it.exit ? " exit" : "") + (state.done[it.id] ? " done" : "") + '" data-id="' + it.id + '">' +
+      '<input type="checkbox" id="cb-' + it.id + '"' + (state.done[it.id] ? " checked" : "") + '><label for="cb-' + it.id + '">' + esc(it.t) + "</label>" +
+      '<span class="tags">' + tags.join("") + "</span></li>";
+  }
+  const PHASES = ["Phase 1: Technical user validation", "Phase 2: Business user validation", "Phase 3: Access and consumption layer", "Phase 4: Onboarding and monitoring", "Phase 5: Staged rollout"];
+  const STATUS = ["Not started", "In progress", "Blocked", "Done"];
+  function trackerHtml() {
+    return '<div class="tracker"><table><tr><th>Milestone</th><th>Owner</th><th>Due date</th><th>Status</th><th>Notes or blockers</th></tr>' +
+      PHASES.map((p, k) => { const t = state.tracker[k] || {};
+        return "<tr><td>" + esc(p) + '</td><td><input data-tk="' + k + '" data-f="owner" value="' + esc(t.owner || "") + '" placeholder="Name"></td>' +
+          '<td><input type="date" data-tk="' + k + '" data-f="due" value="' + esc(t.due || "") + '"></td>' +
+          '<td><select data-tk="' + k + '" data-f="status">' + STATUS.map((s) => "<option" + ((t.status || STATUS[0]) === s ? " selected" : "") + ">" + s + "</option>").join("") + "</select></td>" +
+          '<td><input data-tk="' + k + '" data-f="notes" value="' + esc(t.notes || "") + '" placeholder="Optional"></td></tr>'; }).join("") + "</table></div>";
+  }
+  function render() {
+    document.getElementById("main").innerHTML = S.map((s) =>
+      '<section class="sec" id="' + s.key + '"><div class="sec-h"><span class="ico ' + s.color + '"><svg class="ic"><use href="#' + s.icon + '"/></svg></span>' +
+      '<div><div class="kick">' + esc(s.kicker) + "</div><h2>" + esc(s.title) + '</h2></div><span class="cnt" data-cnt="' + s.key + '"></span></div>' +
+      '<p class="intro">' + esc(s.intro) + "</p>" + (s.tracker ? trackerHtml() : "") +
+      s.groups.map((g) => '<div class="grp' + (g.isNew ? " new-grp" : "") + '"><div class="grp-h"><h3>' + esc(g.title) + "</h3>" +
+        (g.meta ? '<span class="meta">' + esc(g.meta) + "</span>" : "") + '<span class="gc"></span></div><ul class="items">' + g.items.map(itemHtml).join("") + "</ul></div>").join("") +
+      "</section>").join("");
+    document.getElementById("side").innerHTML = S.map((s) =>
+      '<a href="#' + s.key + '" data-nav="' + s.key + '"><span class="ico ' + s.color + '"><svg class="ic"><use href="#' + s.icon + '"/></svg></span><span>' + esc(s.title) +
+      '</span><span class="pc" data-pc="' + s.key + '"></span><span class="minibar"><i data-mb="' + s.key + '"></i></span></a>').join("");
+    progress();
+  }
+  function progress() {
+    let tot = 0, dn = 0;
+    S.forEach((s) => {
+      const its = s.groups.flatMap((g) => g.items); const d = its.filter((i) => state.done[i.id]).length;
+      tot += its.length; dn += d;
+      const pc = Math.round((100 * d) / its.length);
+      const c = document.querySelector('[data-cnt="' + s.key + '"]'); c.textContent = d + " / " + its.length; c.classList.toggle("done", d === its.length);
+      const p = document.querySelector('[data-pc="' + s.key + '"]'); p.textContent = pc + "%"; p.classList.toggle("done", d === its.length);
+      document.querySelector('[data-mb="' + s.key + '"]').style.width = pc + "%";
+    });
+    document.querySelectorAll(".grp").forEach((g) => { const b = g.querySelectorAll("input[type=checkbox]"); const c = g.querySelectorAll("input[type=checkbox]:checked");
+      g.querySelector(".gc").textContent = c.length + " of " + b.length; });
+    const pct = tot ? Math.round((100 * dn) / tot) : 0;
+    document.getElementById("ring-pct").textContent = pct + "%";
+    document.getElementById("ring-cnt").textContent = dn + " of " + tot + " done";
+    document.getElementById("ring-fg").style.strokeDashoffset = 314.16 * (1 - dn / (tot || 1));
+  }
+  document.addEventListener("change", (e) => {
+    const cb = e.target.closest("li.it input"); if (cb) { const li = cb.closest("li.it"); state.done[li.dataset.id] = cb.checked || undefined; li.classList.toggle("done", cb.checked); save(); progress(); return; }
+    const tk = e.target.closest("[data-tk]"); if (tk) { const k = tk.dataset.tk; state.tracker[k] = Object.assign({}, state.tracker[k], { [tk.dataset.f]: tk.value }); save(); }
+  });
+  document.addEventListener("input", (e) => { const tk = e.target.closest("input[data-tk]"); if (tk) { const k = tk.dataset.tk; state.tracker[k] = Object.assign({}, state.tracker[k], { [tk.dataset.f]: tk.value }); save(); } });
+  function setCloud(c) {
+    state.cloud = c; save();
+    document.querySelectorAll("#cloud button").forEach((b) => b.classList.toggle("on", b.dataset.c === c));
+    document.querySelectorAll("a.doc[data-doc]").forEach((a) => { if (a.dataset.doc) a.href = BASE[c] + a.dataset.doc; });
+  }
+  document.getElementById("cloud").addEventListener("click", (e) => { const b = e.target.closest("button"); if (b) setCloud(b.dataset.c); });
+  const on = document.getElementById("only-new");
+  on.checked = !!state.onlyNew; document.body.classList.toggle("only-new", on.checked);
+  on.addEventListener("change", () => { state.onlyNew = on.checked; save(); document.body.classList.toggle("only-new", on.checked); });
+  document.getElementById("reset").addEventListener("click", () => {
+    if (!confirm("Clear all ticks and milestone entries saved in this browser?")) return;
+    state.done = {}; state.tracker = {}; save(); render(); setCloud(state.cloud);
+  });
+  const obs = new IntersectionObserver((es) => es.forEach((en) => { if (en.isIntersecting) document.querySelectorAll("nav.side a").forEach((a) => a.classList.toggle("cur", a.dataset.nav === en.target.id)); }), { rootMargin: "-30% 0px -60% 0px" });
+  render(); setCloud(state.cloud);
+  document.querySelectorAll("section.sec").forEach((s) => obs.observe(s));
+  window.__checklistCount = all.length;
+})();
+</script>
+</body>
+</html>

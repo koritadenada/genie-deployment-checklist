@@ -1,0 +1,622 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Genie Agents Enterprise Deployment Guide</title>
+<style>:root{--navy:#0B2026;--ink:#1B3139;--muted:#5A6F77;--line:#DCE4E8;--bg:#F7F9FA;--blue:#2272B4;--green:#00A972;--orange:#FFAB00;--lava:#FF3621;--maroon:#98102A}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;font:16px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;color:var(--ink);background:#fff}
+a{color:var(--blue);text-decoration:none;border-bottom:1px solid rgba(34,114,180,.25)}
+a:hover{border-bottom-color:var(--blue)}
+code{font:13px/1.4 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;background:#EEF3F5;border-radius:4px;padding:1px 5px;color:var(--navy)}
+.wrap{max-width:1180px;margin:0 auto;padding:0 28px}
+.cover{background:var(--navy);color:#fff;padding:56px 0 44px;border-bottom:4px solid var(--lava)}
+.cover h1{font-size:40px;line-height:1.15;margin:6px 0 12px;letter-spacing:-.01em}
+.eyebrow{text-transform:uppercase;letter-spacing:.14em;font-size:12px;font-weight:700;color:var(--orange);margin:0}
+.lede{font-size:19px;color:#C9D6DB;max-width:760px;margin:0 0 18px}
+.meta{font-size:13px;color:#9FB3BA;margin:0}
+.layout{display:grid;grid-template-columns:250px 1fr;gap:44px;padding-top:36px;padding-bottom:60px}
+.toc{position:sticky;top:20px;align-self:start;font-size:14px}
+.toc p{font-weight:700;text-transform:uppercase;letter-spacing:.1em;font-size:11px;color:var(--muted);margin:0 0 8px}
+.toc ol{list-style:none;margin:0;padding:0}
+.toc li a{display:block;padding:5px 10px;border:0;border-left:2px solid var(--line);color:var(--ink)}
+.toc li.sub a{padding-left:22px;font-size:13px;color:var(--muted)}
+.toc li a:hover{border-left-color:var(--lava);color:var(--navy)}
+.print{margin-top:16px;width:100%;padding:9px 10px;border:1px solid var(--line);background:#fff;border-radius:8px;font:600 13px/1 inherit;color:var(--ink);cursor:pointer}
+.print:hover{border-color:var(--blue);color:var(--blue)}
+main{min-width:0}
+section{padding:8px 0 30px;border-bottom:1px solid var(--line);margin-bottom:26px;scroll-margin-top:16px}
+.sec-k{font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--lava);margin-bottom:4px}
+.tab-title{font-size:30px;font-weight:700;color:var(--navy);margin:4px 0 2px;line-height:1.2}
+.tab-sub{font-size:18px;color:var(--muted);margin:0 0 12px}
+h2{font-size:28px;color:var(--navy);margin:10px 0 10px;line-height:1.25}
+h3{font-size:21px;color:var(--navy);margin:26px 0 8px}
+h4{font-size:17px;color:var(--navy);margin:20px 0 6px}
+h5{font-size:15px;margin:16px 0 6px}
+p{margin:0 0 12px}
+p.label{font-weight:700;color:var(--navy);margin:16px 0 6px}
+ul{margin:0 0 14px;padding-left:22px}
+li{margin:3px 0}
+.tbl{overflow-x:auto;margin:10px 0 20px;border:1px solid var(--line);border-radius:10px}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th{background:#EEF3F5;text-align:left;color:var(--navy);font-weight:700;padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+td{padding:10px 12px;border-top:1px solid var(--line);vertical-align:top}
+ul.cell{margin:0;padding-left:16px}
+.tag{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.04em;padding:1px 7px;border-radius:999px;vertical-align:2px;margin:0 2px}
+.tag.new{background:#E3F5EE;color:#00704A;border:1px solid #9FDCC4}
+.tag.st{background:#FFF4D9;color:#8A5A00;border:1px solid #F3D48A}
+.callout{border:1px solid #9FDCC4;background:#F2FBF7;border-radius:10px;padding:14px 16px;margin:14px 0}
+.callout p{margin:6px 0 0}
+footer{font-size:13px;color:var(--muted)}
+@media (max-width:860px){.layout{grid-template-columns:1fr}.toc{position:static}}
+@media print{.toc{display:none}.layout{display:block}.cover{background:#fff;color:var(--ink);border-bottom:2px solid var(--lava)}.lede,.meta{color:var(--muted)}section{break-inside:auto}a{border:0}}
+</style></head>
+<body>
+<header class="cover"><div class="wrap">
+<p class="eyebrow">Databricks Genie</p>
+<h1>Genie Agents Enterprise Deployment Guide</h1>
+<p class="lede">From a successful proof of concept to a production-grade deployment that serves hundreds or thousands of business users.</p>
+<p class="meta">Version: November 2026 &middot; Prepared with your Databricks account team &middot; Items marked <span class="tag new">New</span> cover Genie One, Genie Ontology, Domains, Pages, certification, bundles and MCP.</p>
+</div></header>
+<div class="wrap layout">
+<nav class="toc"><p>Contents</p><ol><li class=""><a href="#genie-agents-deployment-guide">Genie Agents Deployment Guide</a></li><li class="sub"><a href="#fast-start">Fast Start</a></li><li class=""><a href="#deployment-lifecycle">Deployment Lifecycle</a></li><li class="sub"><a href="#technical-onboarding-checklist">Technical Onboarding Checklist</a></li><li class=""><a href="#success-pillars">Success Pillars</a></li><li class="sub"><a href="#1-business-scope-and-agent-design">1. Business Scope and Agent Design</a></li><li class="sub"><a href="#2-data-foundation">2. Data Foundation</a></li><li class="sub"><a href="#3-governance-security">3. Governance &amp; Security</a></li><li class="sub"><a href="#4-enablement-change-management">4. Enablement &amp; Change Management</a></li><li class="sub"><a href="#5-monitoring-continuous-improvement">5. Monitoring &amp; Continuous Improvement</a></li><li class="sub"><a href="#6-integration-embedding">6. Integration &amp; Embedding</a></li></ol><button onclick="window.print()" class="print">Print or save as PDF</button></nav>
+<main><section id="genie-agents-deployment-guide"><div class="sec-k">Genie Agents Deployment Guide</div>
+<h2>What is this guide?</h2>
+<p>This guide is your roadmap for taking Databricks Genie Agents from a successful proof of concept to a production-grade deployment that serves hundreds or thousands of business users across your organisation.</p>
+<p>Whether you are just getting started with Genie Agents or looking to scale an existing deployment, this guide provides practical, step-by-step guidance organised around six key pillars of enterprise readiness.</p>
+<p><em>Note that Genie is the family of Databricks AI experiences. Genie is part of a family of AI experiences built on the same governed data foundation:</em></p>
+<ul><li>
+<em>Genie One (previously Databricks One): A simplified interface for business users to discover and interact with data assets.</em>
+</li><li><em>Genie Agents: Domain-specific environments where data teams configure trusted data, metrics, and business rules that power Genie answers.</em>
+</li><li><em>Genie Code: The AI coding and data assistant for developers and technical practitioners inside the Databricks workspace.</em>
+</li></ul>
+<p><em>As of November 2026, this guide is focused on Genie Agents, with the Genie One and Genie Ontology context they now work in.</em></p>
+<h3>How to navigate this document</h3>
+<div class="tbl"><table><tr><th><strong>Section</strong></th><th><strong>What You Will Find</strong></th><th><strong>Time to Read</strong></th></tr><tr><td><strong>Fast Start</strong></td><td>A high-level overview of the entire deployment approach: foundations, delivery, and scale-out</td><td>~5 minutes</td></tr><tr><td><strong>Deployment Lifecycle</strong></td><td>Six phases with key activities, exit criteria, and suggested timelines</td><td>~5 minutes</td></tr><tr><td><strong>The Success Pillars</strong></td><td>The foundational areas to address when rolling out Genie Agents at scale: even if some are already in place, revisit them to capture additional requirements</td><td>~5 minutes/pillar</td></tr><tr><td><strong>Technical Checklist</strong></td><td>A comprehensive checklist to validate before taking a Genie Agent live</td><td>~5 minutes</td></tr></table></div>
+<h3>Who should read this</h3>
+<div class="tbl"><table><tr><th><strong>Audience</strong></th><th><strong>What You Will Get</strong></th></tr><tr><td><strong>Business Analyst</strong></td><td>Define the scope and requirements for Genie Agents</td></tr><tr><td><strong>Data &amp; BI Engineer / Administrator</strong></td><td><ul class='cell'><li>Set strong data foundations, build and maintain high-quality Genie Agents</li><li>Compliance, permissions, and access control requirements</li></ul></td></tr><tr><td><strong>Technical Executive Decision Maker</strong></td><td><ul class='cell'><li>Strategy, governance, and rollout planning.</li><li>Enable controlled enterprise AI adoption with governance</li></ul></td></tr><tr><td><strong>Business User</strong></td><td>Understanding what Genie can do and how to get started</td></tr></table></div></section><section id="fast-start"><div class="sec-k">Fast Start</div><p class="tab-title">Fast Start</p>
+<p class="tab-sub">Your 3-part deployment considerations</p>
+<p>Enterprise Genie Agent adoption rarely fails due to technology; it fails when organisations scale before their foundations are in place and teams are ready.</p>
+<p>Success depends on aligning mindset and execution: focusing on clear business outcomes, demonstrating measurable ROI, and backing delivery with strong executive sponsorship, disciplined project management, and scalable foundations.</p>
+<p>This section focuses on three essentials for a successful rollout: getting the foundations right, delivering agents iteratively to drive early value, and sustaining quality as adoption scales.</p>
+<h2>Part 1: Start Solid with Foundation Checks</h2>
+<p>A <a href="https://docs.databricks.com/aws/en/genie/">Genie Agent</a> is a Databricks feature that allows business teams to interact with their data using natural language. It uses generative AI tailored to your organisation's terminology and data, with the ability to monitor and refine its performance through user feedback.</p>
+<p>Every delivery plan includes an upfront preparation phase. The Success Pillars provide guidance on how to approach each foundational area.</p>
+<p>Start these activities early and allow enough time for completion. Treat security sign-off, user onboarding, and identity provisioning as one-time foundational tasks, but don’t let them delay agent development; run them in parallel as separate workstreams.</p>
+<h3>Part 2: Fast delivery through empowered owners</h3>
+<p>We recommend iterating in waves, domain by domain, and empowering builders to deliver value regularly. This has a cultural implication: learning to accept good enough quickly and to build on feedback rather than perfect delivery.</p>
+<p>Each agent follows the same practitioner lifecycle. Each build should take <strong>1–4 weeks from zero</strong>, with <a href="https://docs.databricks.com/aws/en/genie-agents/best-practices">best practices</a> in place<strong>.</strong> The loop does not end at launch, as monitoring, feedback, and curation keep the agent improving continuously.</p>
+<p><strong>One rule of thumb above all others: </strong>keep each agent to a small number of tables. Focused agents are more accurate than broad agents with 20+ tables. When scope creeps, create a new agent rather than expanding the existing one.</p>
+<h3>Part 3: The scale-out model</h3>
+<p>Once you have multiple agents in production, individual attention is not enough. Three practices keep a growing portfolio healthy.</p>
+<div class="tbl"><table><tr><th><strong>Practice</strong></th><th><strong>Why it matters</strong></th></tr><tr><td><strong>Push left</strong></td><td>Fix data quality and metadata upstream in Unity Catalog; every improvement benefits every agent that shares that data, not just the one you're working on.</td></tr><tr><td><strong>Monitor at scale</strong></td><td>Set up portfolio-level <a href="https://docs.databricks.com/aws/en/genie-agents/monitor">monitoring</a> early. As adoption grows, catching degrading agents before users notice becomes critical. Use system tables and benchmarks, not just manual spot-checks.</td></tr><tr><td><strong>Community of practice</strong></td><td>Agent authors sharing patterns, a shared benchmark library, and a quarterly agent health review cadence keep quality high without a central bottleneck.</td></tr></table></div>
+<div class="callout"><span class="tag new">New</span><p><strong>Model the head, let Genie learn the tail.</strong> Genie now works on a shared context layer, <a href="https://docs.databricks.com/aws/en/genie/genie-ontology/">Genie Ontology</a>, that Genie One and Genie Code both search. Define the business-critical concepts explicitly (top KPIs as metric views, key terms as Pages, assets grouped into Domains, trusted assets certified) and let Genie learn the rest from usage. Genie treats this modeled knowledge as more authoritative than learned knowledge.</p></div>
+<p><em>The next sections of the guide provide the details you need to lay the foundations and put a successful deployment lifecycle in motion. </em></p></section><section id="deployment-lifecycle"><div class="sec-k">Deployment Lifecycle</div><h2>Deployment Lifecycle</h2>
+<p>The table below shows how a typical Genie Agent deployment progresses from initial discovery through enterprise-wide rollout. Each phase builds on the previous one, though some phases run in parallel.</p>
+<div class="tbl"><table><tr><th><strong>Phase</strong></th><th><strong>Name</strong></th><th><strong>Duration</strong></th><th><strong>Purpose</strong></th><th><strong>Key Activities</strong></th><th><strong>Exit Criteria</strong></th></tr><tr><td><strong>P0</strong></td><td><strong>Discovery &amp; Assessment</strong></td><td>2–3 weeks</td><td>Understand landscape, use cases, and readiness.</td><td><ul class='cell'><li>Discovery workshops with business stakeholders</li><li>Data readiness assessment</li><li>Stakeholder identification</li><li>Success criteria definition</li><li>Topology</li></ul></td><td><ul class='cell'><li>Use cases prioritised</li><li>Data readiness assessed</li><li>Stakeholder RACI finalised</li><li>Success metrics agreed</li></ul></td></tr><tr><td><strong>P1</strong></td><td><strong>Build &amp; Technical Validation</strong></td><td>2–4 weeks</td><td>Build &amp; technically validate Genie Agents.</td><td><ul class='cell'><li>Data preparation</li><li>Agent configuration</li><li>Instruction curation</li><li>Benchmark testing</li></ul></td><td><ul class='cell'><li>All tables have metadata and descriptions</li><li>Benchmark accuracy ≥80% for 1–2 weeks</li><li>Sample questions added</li><li>Knowledge Store configured</li></ul></td></tr><tr><td><strong>P2</strong></td><td><strong>Business User Validation</strong></td><td>1–2 weeks</td><td>Validate with real business users.</td><td><ul class='cell'><li>Onboard 5 power users</li><li>Collect structured feedback</li><li>Iterate on instructions</li></ul></td><td><ul class='cell'><li>Power users sign off</li><li>Evaluation scorecard meets thresholds</li><li>Critical feedback addressed</li></ul></td></tr><tr><td><strong>P3</strong></td><td><strong>Access &amp; Consumption Setup</strong></td><td>1–2 weeks (parallel to 2)</td><td>Configure access, identity, and channels.</td><td><ul class='cell'><li>Set up permissions - Configure identity provisioning</li><li>Test consumption channels (UI, dashboards, apps, chat integrations)</li></ul></td><td><ul class='cell'><li>All target users are correctly entitled</li><li>Consumption channels tested end-to-end</li></ul></td></tr><tr><td><strong>P4</strong></td><td><strong>Monitoring &amp; Onboarding Setup</strong></td><td>Parallel</td><td>Set up monitoring, alerting, and user enablement.</td><td><ul class='cell'><li>Deploy monitoring dashboards</li><li>Configure alerts</li><li>Publish internal user guide</li><li>Establish feedback processes</li></ul></td><td><ul class='cell'><li>Monitoring operational</li><li>Alerts configured</li><li>User documentation published</li></ul></td></tr><tr><td><strong>P5</strong></td><td><strong>Staged Rollout</strong></td><td>4–8 weeks</td><td>Gradually scale from pilot to enterprise-wide rollout.</td><td><ul class='cell'><li>Week 0: 10 users (validate stability)</li><li>Week 2–3: 50 users (department scale)</li><li>Week 4–5: 200 users (division scale)</li><li>Week 6+: enterprise-wide (full rollout)</li></ul></td><td><ul class='cell'><li>At each stage: usage monitored, feedback reviewed, instructions iterated</li><li>System performance is confirmed before expanding to the next stage</li></ul></td></tr></table></div>
+<p><em>For a per-agent operational tracker that maps to phases P1–P5 with milestones, owners, and exit criteria, use the Checklist subtab.</em></p></section><section id="technical-onboarding-checklist"><div class="sec-k">Technical Onboarding Checklist</div><p class="tab-title">Genie Agent Technical Onboarding Checklist</p>
+<p>This checklist supports the onboarding of a validated Genie Agent into Production, ensuring smooth adoption and effective use of data insights. It outlines five key phases: validation by stakeholders, access setup, interface readiness, monitoring and onboarding, and a staged rollout plan. Follow each step, meet the exit criteria before advancing, and work closely with your Databricks team, especially as usage scales, to ensure a successful launch. This assumes you’ve already gone through Phase 0 - Discovery &amp; Assessment.</p>
+<div class="tbl"><table><tr><th>Milestone Tracker</th><th></th><th></th><th></th><th></th></tr><tr><td>Milestone</td><td>Owner</td><td>Due Date</td><td>Status</td><td>Notes / Blockers</td></tr><tr><td>Phase 1 - Technical User Validation of the Genie Agent</td><td></td><td></td><td></td><td></td></tr><tr><td>Phase 2 - Business User Validation of the Genie Agent</td><td></td><td></td><td></td><td></td></tr><tr><td>Phase 3 - Prepare Access and Consumption Layer</td><td></td><td></td><td></td><td></td></tr><tr><td>Phase 4 - Put Onboarding &amp; Monitoring Processes in Place</td><td></td><td></td><td></td><td></td></tr><tr><td>Phase 5 - Stage the Rollout to More Users</td><td></td><td></td><td></td><td></td></tr></table></div>
+<h4>Phase 1 - Technical User Validation of the Genie Agent</h4>
+<p>Once you have a Genie Agent that your creating team is happy with, we recommend you start the final validation process. For the purpose of this phase, we recommend that you actively use the Agent yourselves as Agent administrators, adjust the context as needed (<a href="https://docs.databricks.com/aws/en/genie-agents/best-practices">docs</a>), and regularly update and re-run benchmarks if any new questions arise last-minute before the next phase.</p>
+<ul><li>
+A <a href="https://docs.databricks.com/aws/en/genie-agents/best-practices#start-small">limited</a> number of tables (the fewer the better)
+</li><li>Tables should have Primary &amp; Foreign Keys set, and table metadata is well <a href="https://docs.databricks.com/aws/en/genie-agents/best-practices">documented</a> - columns have clear and precise names and descriptions
+</li><li><a href="https://docs.databricks.com/aws/en/genie-agents/tune-quality#prompt-matching-overview">Entity matching</a> (formerly “Value dictionaries”) helps when users’ prompts do not match the structure or values in the data (e.g., a user prompts “Florida” but the row values are “FL”)
+</li><li><a href="https://docs.databricks.com/aws/en/genie-agents/tune-quality#add-example-sql-queries-and-functions">Example SQL</a> is in place for the most common types of questions (preferably 10 or more). Parameterised queries are preferred because they can improve answer quality. Where a measure/filter/dimension can be expressed structurally, prefer a SQL Expression in the Knowledge Store over text instructions.
+</li><li><a href="https://docs.databricks.com/aws/en/genie-agents/best-practices#choose-the-right-instruction-type">Instructions</a> mostly contain business terminology (acronyms, definitions, etc.), specific desired behaviours (e.g. if a prompt mentions X, always follow up until Y is also included), and miscellaneous guidance (e.g., always answer in language XYZ) that cannot be covered by table/column descriptions or Example Queries. If in doubt, always prioritise table/column descriptions and parameterised Example SQL.
+</li><li><a href="https://docs.databricks.com/aws/en/genie-agents/monitor#benchmarks">Benchmarks</a> achieve the desired score: aim for ~80% accuracy; cover the top 15–20 expected user questions with 2–4 phrasings each (~30–80 benchmarks total); agents support up to 500 benchmark questions; use the auto-suggested benchmarks feature to seed
+</li></ul>
+<p class="label">Exit criteria:</p>
+<ul><li>
+Benchmarks run at ~80% accuracy over the course of ~1-2 weeks
+</li><li>Agent Editors (technical stakeholders) have actively been using the agent for ~1-2 weeks
+</li></ul>
+<h4>Phase 2 - Business User Validation of the Genie Agent</h4>
+<p>Since your benchmarks have been running regularly, it’s time to onboard a handful (~5) of business power users (preferably those who were part of the initial scope definition as key stakeholders) for the business validation step. You don’t need to set up the full access infrastructure just yet - you can give them temporary access to the workspace, with SQL entitlements, and the right permissions to use the agent and run queries (<a href="https://docs.databricks.com/aws/en/genie-agents/set-up#share-a-genie-agent">docs</a>).</p>
+<ul><li>
+Business power users have had ~1-2 weeks of consistent testing and are satisfied with the answers at this stage of the Agent
+</li><li>Any changes needed to be made to the Agent have been done while keeping in mind the steps outlined during Phase 1 - for major changes, restart the timer on the ~1-2 weeks of testing
+</li></ul>
+<p class="label">Exit criteria (can happen in parallel to Phases 3 and 4):</p>
+<ul><li>
+Power users have tested the agent for 1-2 weeks without any major changes needed to the agent (you should anticipate ongoing review of user feedback and modification of agent context for the lifetime of the agent)
+</li></ul>
+<h4>Phase 3 - Prepare Access and Consumption Layer</h4>
+<p>You can run some of the administration steps in this section in parallel to Phase 2. You should aim to get in place a robust access management system in place, depending on the preferred way of sharing the Genie Agent at scale within your organisation</p>
+<ul><li>
+Choose the preferred way to consume the Genie Agent - in the Genie UI, through a Dashboard Chat Box, or through Customer Web Apps or Teams/Slack integration via the Genie Conversation API (and build if required)
+</li><li>Ensure basic <a href="https://docs.databricks.com/aws/en/genie-agents/set-up#share-a-genie-agent">permissions</a> are in place for consuming users
+<ul><li>
+Define credential methodology - viewer vs. embedded credentials - based on requirements. For the Genie Conversation API path, prefer OAuth over a single PAT token: OAuth preserves per-user UC privileges and per-user usage attribution, whereas a shared PAT loses per-user visibility and is billed as a single identity.
+</li><li>If required, set up <a href="https://learn.microsoft.com/en-us/azure/databricks/admin/users-groups/automatic-identity-management">Automatic Identity Access</a> in Azure
+</li><li>If required, set up Share to Account Users (embedded-credentials only): in Public Preview (July 2026), but being functionally superseded by the account-level Genie path below; prefer the GA path below for new builds
+</li><li>For business-user consumption without workspace access, the preferred path is the account-level Genie One (formerly Databricks One): supports viewer credentials and a simplified UI on top of the Consumer entitlement; provision via AIM/SCIM. The “Change default workspace access to Consumer access” toggle is in Public Preview (July 2026).
+</li></ul>
+</li></ul>
+<p class="label">Exit criteria (can happen in parallel to Phases 2 &amp; 4):</p>
+<ul><li>
+You have defined (and built, as needed) the way in which business users will interact with Genie
+</li></ul>
+<h4>Phase 4 - Put Onboarding &amp; Monitoring Processes in Place</h4>
+<p>You can run some of the administration steps in this section in parallel to Phase 2. Leverage tooling already available in Databricks to ensure that Agent administrators can actively review the Agent and react to issues in a timely manner, and make sure you publish this information and internal SLAs as part of onboarding users to the Genie Agent:</p>
+<ul><li>
+Set up SQL Warehouse monitoring to ensure SLAs are met. General SQL Warehouse monitoring guidance (<a href="https://medium.com/dbsql-sme-engineering/monitor-dbsql-warehouse-slas-with-real-time-alerts-c4dc36c45c5c#:~:text=Databricks%20provides%20built%2Din%20alerting,when%20SLAs%20are%20at%20risk.">example blog</a>)
+</li><li>Set a schedule on which to address requests for <a href="https://docs.databricks.com/aws/en/genie-agents/monitor#response-feedback">reviews</a>
+</li><li>Set up monitoring of <a href="https://docs.databricks.com/aws/en/admin/account-settings/audit-logs#aibi-genie-events">Genie Audit events</a> (and alert <a href="https://docs.databricks.com/aws/en/genie-agents/audits-alerts">examples</a> available) to measure spikes in conversations/users - gauge adoption and whether usage is approaching your budgets
+</li><li>Leverage the Weekly Monitoring Digest in the Genie Agent Monitoring tab, or consider this <a href="https://github.com/Dynosphere/aibi-adoption-dashboard">community adoption dashboard</a> for Genie Agent-specific observability
+</li><li>Define the internal processes of how new users will get access to consume the Genie Agent
+</li></ul>
+<p class="label">Exit criteria (can happen in parallel to Phases 2 &amp; 3):</p>
+<ul><li>
+An internal document available to the upcoming users of the Genie Agent that provides them with details about the Genie Agent and its scope, how to request access, <a href="https://docs.databricks.com/aws/en/genie-agents/talk-to-genie">how to</a> use Genie to explore business data, as well as the cadence of feedback reviews
+</li><li>Alerts are in place to notify the admin team when the SQL Warehouse is breaking defined SLAs
+</li><li>Alerts are in place to notify the admin team when usage is reaching the current budgets
+</li></ul>
+<h4>Phase 5 - Stage the Rollout to More Users</h4>
+<p><strong>Validate that Phases 1-4 have been completed before beginning the broader rollout to ensure end users have a positive experience.</strong> Define your desired end-state in terms of # of users that will have access to the Genie Agent, as well as what the peaks of concurrency are that you think you’ll reach (e.g. how does peak traffic look during your busiest hours), and work from those numbers backwards. For example, if you think the Genie Agent will be accessible by 500 users in T0 + 2 months, then create a staged roll-out plan that allows you to monitor via the solutions put in place in Phase 4, adjust the Agent based on any unknown questions that come up via the new users, and keep up with the increasing number of manual reviews asked.</p>
+<p>We strongly recommend that in the first few weeks, the admin team and the users onboarded work closely to solve any issues that were not preempted in the first two phases. We suggest the following staged approach (starting from your pilot launch date as T0), and only progressing to the next step if there are no changes to the Agent - otherwise, allow for a couple of days in between to mitigate any unpredictable quality changes that could arise due to changes:</p>
+<ul><li>
+T0: Reach 10 users in the Agent
+</li><li>T0 + 2-3 weeks: Reach 50 users in the Agent
+</li><li>T0 + 3-4 weeks: Reach 200 users in the Agent
+</li></ul>
+<p>For subsequent batches, we recommend continuing onboarding in a staged fashion, but do exponential increases after the first couple of stages.</p>
+<p>When you are getting close to any of the monitoring limits defined in Phase 4:</p>
+<ul><li>
+For SQL Warehouse issues, increase WH size/autoscaling as needed. Follow <a href="https://docs.databricks.com/aws/en/compute/sql-warehouse/warehouse-behavior#sizing-a-serverless-sql-warehouse">these</a> guidelines for SQL Warehouse T-shirt sizing.
+</li><li>For increases in # of manual reviews needed, ensure you’re staffing the admin team appropriately
+</li><li>Since Genie moved to pay-as-you-go (July 2026), there are no fixed questions-per-minute caps on the API. Capacity is shared, so short bursts can return temporary 429 responses: build retries with exponential backoff, and work with your account team if you need dedicated capacity. Use <a href="https://docs.databricks.com/aws/en/genie/budgets">Genie budgets</a> to control spend.</ul>
+</li></ul></section><section id="success-pillars"><div class="sec-k">Success Pillars</div><h2>Why Genie?</h2>
+<p>Genie lets your business users ask questions in plain language and get answers from your governed enterprise data, no SQL skills required. It bridges the gap between data teams and business users, enabling:</p>
+<ul><li>
+<strong>Faster time to insight.</strong> Business users get answers in seconds, not days.
+</li><li><strong>Consistent metrics.</strong> Every answer draws from the same governed, curated data.
+</li><li><strong>Lower support burden.</strong> Routine "Can you pull this data?" requests are handled directly by Genie.
+</li><li><strong>Built-in trust.</strong> Users can see the SQL behind every answer, and critical queries can be certified for guaranteed accuracy.
+</li></ul>
+<p>Genie isn't a generic chatbot; it is a specialised tool tailored to your organisation's unique data landscape. <strong>A production-ready Genie is a governed, trusted, supportable self-service analytics product that:</strong></p>
+<ul><li>
+Answers real business questions against curated enterprise data.
+</li><li>Respects your existing data governance and security model.
+</li><li>Gives business users confidence in the answers.
+</li><li>Scales across multiple teams and domains.
+</li><li>Has clear ownership, testing, monitoring, and support.
+</li></ul>
+<p><strong>The key shift - </strong>in a PoC, the question is "Can Genie answer some good questions?", whereas in production, the question is "Can Genie answer the right questions, consistently, securely, and at scale?".</p>
+<p>The most common failure in enterprise Genie adoption is not technical: it is scaling before the foundations are in place and the people are ready. The most common success pattern is getting your foundations right, delivering agents iteratively, and sustaining quality as you scale.</p>
+<h2>The Six Pillars</h2>
+<p>The six pillars cover everything an enterprise needs to deploy Genie successfully. Pillars 1 to 5 are foundational; Pillar 6 is optional and only applies if you need to extend Genie outside the native Databricks UI (Teams, Slack, custom apps, embedded experiences).</p>
+<div class="tbl"><table><tr><th><strong>Pillar</strong></th><th><strong>Focus Area</strong></th><th><strong>What "good" looks like</strong></th></tr><tr><td>1. Business Scope &amp; Agent Design</td><td>Design focused agents, define a curation strategy, and assign ownership</td><td>Five or fewer tables per agent; clear owner; 20 to 50 in-scope questions defined; Trusted Assets in place for critical KPIs</td></tr><tr><td>2. Data Foundation</td><td>Ensure data quality, metadata, and documentation are production-ready</td><td>Curated Silver / Gold tables in Unity Catalog; every column has a description; entity matching configured for categorical columns</td></tr><tr><td>3. Governance &amp; Security</td><td>Configure access controls, credential models, and compliance requirements</td><td>Unity Catalog permissions, row filters, and column masks enforced per user; credential model documented per deployment pattern</td></tr><tr><td>4. Enablement &amp; Change Management</td><td>Train authors and users, build trust, drive adoption</td><td>Agent authors trained; sample questions and a prompt guide published; feedback loop active; common objections answered</td></tr><tr><td>5. Monitoring &amp; Continuous Improvement</td><td>Benchmark accuracy, review feedback, iterate on quality</td><td>≥80% benchmark accuracy before production; Monitor tab reviewed on schedule; audit-log alerts configured</td></tr><tr><td>6. Integration &amp; Embedding (Optional)</td><td>Extend Genie to Teams, Slack, APIs, and consumer portals</td><td>Throughput planned against observed demand; API integrations use minimum-privilege identity; channel choice matches the user audience</td></tr></table></div>
+<h2>Through-lines across the pillars</h2>
+<p>A few themes run across all six pillars and are worth stating explicitly:</p>
+<ul><li>
+<strong>Foundations before features.</strong> A focused, well-documented, governed agent outperforms a broad agent with clever instructions. Pillars 1 and 2 carry more weight than any prompt-engineering trick later in the stack.
+</li><li><strong>Unity Catalog is the security boundary, not the Genie Agent.</strong> Row filters, column masks, and table grants automatically enforce per-user data access. A Genie Agent defines the curated experience; it is not a hard data boundary.
+</li><li><strong>Production-ready is measurable.</strong> The ≥80% benchmark-accuracy target is the gate to production. Below that, an agent is not ready regardless of how it feels in a demo.
+</li><li><strong>Field-recommended versus Databricks-published.</strong> Most adoption targets and review cadences in this guide are field-recommended starting points. Only a high-accuracy gate and the documented product limits are published by Databricks. Calibrate the rest to your organisation.
+</li><li><strong>Ownership beats one-off effort.</strong> Agents that drift in accuracy do so because no one owns them. A senior analyst or data product owner per agent is the strongest predictor of sustained quality.
+</li></ul>
+<h2>Top five ways enterprise rollouts stall</h2>
+<ul><li>
+<strong>Cross-domain agents.</strong> Trying to make one agent answer everything. Always less accurate than three focused agents.
+</li><li><strong>Skipping benchmarks.</strong> Promoting to production without a benchmark suite leaves accuracy invisible and degradation undetectable.
+</li><li><strong>Treating Genie as a feature, not a product.</strong> No owner, no backlog, no cadence equals quality decay within weeks of launch.
+</li><li><strong>Confusing the UI with the security boundary.</strong> Hiding columns in the Knowledge Store is not access control. Unity Catalog grants are.
+</li><li><strong>Scaling channels before the agent is production-quality.</strong> Adding Teams or Slack to a marginal agent amplifies the wrong answers to more users.
+</li></ul></section><section id="1-business-scope-and-agent-design"><div class="sec-k">1. Business Scope and Agent Design</div><h2>Pillar 1: Business Scope and Agent Design</h2>
+<p>Design each Genie Agent for a defined business domain and a known set of user questions. Include the business terms, metrics, and tables required for that domain, and keep unrelated topics out of scope.</p>
+<p>Scope limits answer quality. An agent spanning unrelated domains is consistently less accurate than one that stays within its boundaries.</p>
+<h3>1.1 Design Principles</h3>
+<p><strong>Keep the agent narrow.</strong> Aim for <a href="https://docs.databricks.com/aws/en/genie-agents/best-practices">five or fewer tables per agent, with 50 as the hard limit</a>. Use one agent per business domain. Create separate agents for Finance, Sales, Operations, and HR rather than one cross-domain agent. Narrower agents consistently produce better answers.</p>
+<p>Before configuration starts, define:</p>
+<ul><li>
+The audience.
+</li><li>The 20 to 50 business questions the agent should answer.
+</li><li>The KPIs and datasets it owns.
+</li><li>The topics explicitly out of scope.
+</li></ul>
+<p>State out-of-scope topics in the agent instructions. Treat those instructions as guidance for Genie's behaviour, not as access control. Unity Catalog permissions still govern what users can actually query.</p>
+<p class="label">Size by audience:</p>
+<ul><li>
+<strong>Executive agent:</strong> 2 to 3 summary tables with approved metrics.
+</li><li><strong>Domain analyst agent:</strong> 3 to 5 detailed tables for follow-up questions.
+</li></ul>
+<p>Validate the first 10 to 20 questions against the expected SQL and answers before opening the agent to a wider audience. Expand from there.</p>
+<p>Give the agent a clear operating model:</p>
+<ul><li>
+Owner
+</li><li>Backlog
+</li><li>Release cadence
+</li><li>Support model
+</li><li>Success metrics
+</li></ul>
+<h3>1.2 Curation Hierarchy</h3>
+<p>A Genie Agent improves through layered curation. Use the most structural layer that can express each rule. Reserve text instructions for behaviour that cannot be modelled in metadata or SQL.</p>
+<ul><li>
+<strong>Unity Catalog metadata:</strong> The foundation. Accurate table and column descriptions, primary and foreign keys, and tags help Genie identify the right objects, and the same investment improves every other consumer of the catalog.
+</li><li><strong>Metric Views:</strong> Live in Unity Catalog, not in the agent. They give a deterministic KPI definition: the calculation is authored once and applied wherever the view is referenced. Any synonyms declared in the metric view's agent metadata are available to Genie. Prefer Metric Views over agent-level SQL expressions when the KPI is shared across multiple agents.
+</li><li><strong>SQL expressions:</strong> Encode business logic that Genie can use during query generation. Define measures, filters, and dimensions as named expressions so the same logic is reused rather than reinvented per question.
+</li><li><strong>Parameterised example SQL queries:</strong> Map common question patterns to verified queries. When Genie matches a question to an example, it can use that query directly.
+</li><li><strong>Text instructions:</strong> Handle formatting, scope reminders, and clarification prompts. They iterate quickly but are open to interpretation, and the Databricks best-practices guidance recommends <a href="https://docs.databricks.com/aws/en/genie-agents/best-practices">using them as a last resort</a> when no structural option fits.
+</li></ul>
+<h3>1.3 Knowledge Store Configuration</h3>
+<p>The <a href="https://docs.databricks.com/aws/en/genie-agents/tune-quality">Knowledge Store</a> holds the agent-specific configuration Genie uses to interpret tables, joins, calculations, and user phrasing in that agent.</p>
+<p>It contains:</p>
+<ul><li>
+<strong>Agent-level metadata customisation:</strong> Descriptions for tables, columns, business terms, and synonyms scoped to this agent.
+</li><li><strong>Agent-level data customisation:</strong> Simplified or focused views of the underlying data without changing the Unity Catalog tables.
+</li><li><strong>Prompt matching:</strong> Examples that resolve user phrasing to canonical entities, correct common spelling variants, and set output formats.
+</li><li><strong>Join relationships:</strong> Defined table relationships so JOIN logic is consistent.
+</li><li><strong>SQL expressions:</strong> Curated measures, filters, and dimensions.
+</li></ul>
+<p>Knowledge Store changes apply only to the current Genie Agent. They do not modify Unity Catalog or any other Databricks asset.</p>
+<h3>1.4 Sample Questions</h3>
+<p>Configure 6 to 10 sample questions per agent. They set user expectations on first open and provide working phrasing to start with.</p>
+<p>Use the actual metrics, dimensions, and entities the agent owns. Write literal questions, not templated placeholders. For a revenue agent:</p>
+<ul><li>
+What was revenue for Q1 2026?
+</li><li>Who are the top 10 customers by bookings this year?
+</li><li>How does gross margin compare across regions?
+</li><li>Show monthly order volume for the last 12 months.
+</li><li>Which regions missed the plan last quarter?
+</li><li>Break down the pipeline by segment and geography.
+</li></ul>
+<p>Substitute the equivalents for your domain. Where possible, mirror the question patterns covered by your trusted assets so users land on trusted responses from their first interactions.</p>
+<h3>1.5 Modeled knowledge: Domains, Pages and certification <span class="tag new">New</span></h3>
+<p>Beyond the agent itself, <a href="https://docs.databricks.com/aws/en/uc-semantics/">Unity Catalog semantics</a> gives every Genie experience the same business context. Together with metric views these features form the modeled knowledge in Genie Ontology:</p>
+<ul><li><strong><a href="https://docs.databricks.com/aws/en/uc-semantics/domains">Domains</a></strong>: a business-aligned layer (for example Finance, Sales, Marketing/User Acquisition) that groups data assets by governed tags on the Discover page. Domains are account-level and support subdomains. Create one domain per agent's business area.</li><li><strong><a href="https://docs.databricks.com/aws/en/uc-semantics/pages">Pages</a></strong>: a governed definition of one business concept (a term, KPI or acronym), with owner, synonyms, description, body, related assets and sources. Each Page belongs to one domain. Genie One uses the definition and cites the Page.</li><li><strong><a href="https://docs.databricks.com/aws/en/data-governance/unity-catalog/certify-deprecate-data">Certification and deprecation</a></strong>: the <code>system.certification_status</code> tag marks tables, views, metric views, dashboards, Genie Agents, apps and Pages as certified or deprecated, steering Genie One toward the assets your organisation vouches for.</li><li><strong><a href="https://docs.databricks.com/aws/en/uc-semantics/wikis">Wikis</a></strong> <span class="tag st">Beta</span>: document a table's meaning, intended use and sources.</li><li><strong><a href="https://docs.databricks.com/aws/en/genie/genie-ontology/external-knowledge-sources/">External knowledge sources</a></strong> <span class="tag st">Beta</span>: bring measures and relationships from BI semantic models (such as Power BI) into Genie Ontology.</li></ul>
+<p>Model the head and let Genie learn the tail: start with the KPIs and terms that must be right, then expand.</p></section><section id="2-data-foundation"><div class="sec-k">2. Data Foundation</div><h2>Pillar 2: Data Foundation</h2>
+<p>Genie depends on clear metadata, consistent structures, and governed data to turn natural-language questions into accurate SQL queries. It uses your table and column metadata to identify the right dataset, measures, dates, and joins.</p>
+<p>For a question such as "What were total sales last quarter?", Genie must understand:</p>
+<ul><li>
+Which table contains the sales data?
+</li><li>Which column holds the sales amount?
+</li><li>Which column defines the date?
+</li><li>How the relevant tables relate to each other.
+</li></ul>
+<p>If that context is missing or unclear, Genie is more likely to generate incorrect SQL. <strong>Validate each agent with representative benchmark questions before production.</strong></p>
+<h3>2.1 Data Layer Recommendations</h3>
+<p>Use cleaned, curated data rather than raw ingestion tables.</p>
+<ul><li>
+<strong>Raw / Bronze: avoid.</strong> Quality issues, cryptic column names, and incomplete records make Genie unreliable.
+</li><li><strong>Cleaned / Silver: use.</strong> Validated, standardised, consistent data types.
+</li><li><strong>Aggregated / Gold: prefer.</strong> Optimised for analytics, clearer business logic, pre-calculated metrics.
+</li></ul>
+<h3>2.2 Preparation Checklist</h3>
+<p>Preparation happens at two levels: each table in Unity Catalog, and then the Genie Agent that uses them.</p>
+<p class="label">Per table (Unity Catalog)</p>
+<p class="label">Must have</p>
+<ul><li>
+Register the table in Unity Catalog.
+</li><li>Add a table comment that explains the contents and business context.
+</li><li>Add a clear business description for every column.
+</li><li>Use self-explanatory column names. Prefer customer_lifetime_value over clv.
+</li><li>Store date fields as DATE or TIMESTAMP, not strings.
+</li></ul>
+<p class="label">Should have</p>
+<ul><li>
+Define primary and foreign key relationships.
+</li><li>Apply Unity Catalog governance tags for PII and sensitivity classification.
+</li></ul>
+<p class="label">Good to have</p>
+<ul><li>
+Run OPTIMIZE, unless <a href="https://docs.databricks.com/aws/en/optimizations/predictive-optimization">predictive optimisation</a> is enabled.
+</li><li>Document the data freshness cadence.
+</li></ul>
+<p class="label">Per agent (Knowledge Store and ACLs)</p>
+<p class="label">Must have</p>
+<ul><li>
+Apply Unity Catalog permissions on the underlying data, and configure Genie Agent ACLs on the agent itself.
+</li></ul>
+<p class="label">Should have</p>
+<ul><li>
+Keep each agent to five or fewer tables where possible. Treat 50 tables, views or metric views as the hard limit.
+</li><li>Pre-join frequently joined tables into views, or define join relationships in the <a href="https://docs.databricks.com/aws/en/genie-agents/tune-quality">Knowledge Store</a>.
+</li><li>Enable entity matching on categorical columns (regions, statuses, product names) so Genie maps user phrasings to canonical values.
+</li><li>Enable format assistance on important columns to give Genie representative sample values.
+</li></ul>
+<p class="label">Good to have</p>
+<ul><li>
+Hide unnecessary or confusing columns in the Knowledge Store.
+</li></ul>
+<h3>2.3 Metric Views</h3>
+<p><a href="https://docs.databricks.com/aws/en/uc-semantics/metric-views">Metric Views</a> are useful when one KPI definition needs to apply consistently across teams, dashboards, and Genie Agents. Define a metric once, then let users query it by region, time period, or product line without rewriting the calculation each time.</p>
+<p>When Genie answers from a Metric View, it uses the approved definition rather than a locally recreated formula. Adopt Metric Views when you have a shared set of standardised KPIs referenced across multiple teams or reports.</p>
+<p><span class="tag new">New</span> Add <a href="https://docs.databricks.com/aws/en/uc-semantics/agent-metadata">agent metadata</a> to each metric view: display names, synonyms and format specifications. Genie uses the synonyms to map the words people use to the right measure or dimension, so you do not repeat them in every agent. Certify the metric views your agents rely on.</p>
+<h3>2.4 Data Quality Gates</h3>
+<p>Before adding a table to a production Genie Agent, verify the following:</p>
+<div class="tbl"><table><tr><th><strong>Gate</strong></th><th><strong>Check</strong></th><th><strong>Target</strong></th></tr><tr><td>Completeness</td><td>Nulls in critical columns</td><td>Team-defined threshold met, for example, under 5%.</td></tr><tr><td>Freshness</td><td>Data refresh occurs on schedule</td><td>Documented cadence met.</td></tr><tr><td>Accuracy</td><td>Metrics match trusted reports</td><td>Benchmark queries match agreed outputs.</td></tr><tr><td>Schema Stability</td><td>No unplanned breaking changes</td><td>Change management process in place.</td></tr><tr><td>Performance</td><td>Query response times are acceptable</td><td>Tables optimised for expected workloads.</td></tr></table></div>
+<h3>2.5 Discoverability and trust signals <span class="tag new">New</span></h3>
+<ul><li>Tag the curated schemas and tables with the governed tag of their <a href="https://docs.databricks.com/aws/en/uc-semantics/domains">domain</a> so they appear on the Discover page and in Genie One under the right business area.</li><li>Certify the gold tables and metric views that agents use, and deprecate the legacy tables they replace, with <a href="https://docs.databricks.com/aws/en/data-governance/unity-catalog/certify-deprecate-data">certification and deprecation</a>.</li><li>Define the key terms each agent depends on as <a href="https://docs.databricks.com/aws/en/uc-semantics/pages">Pages</a> in that domain.</li><li>On workspaces with the compliance security profile, the Discover page is disabled by default; a workspace admin must enable it to use domains.</li></ul></section><section id="3-governance-security"><div class="sec-k">3. Governance &amp; Security</div><h2>Pillar 3: Governance &amp; Security</h2>
+<p>Genie respects <a href="https://docs.databricks.com/aws/en/data-governance/unity-catalog/">Unity Catalog</a> automatically: your existing access controls, row-level security, and data-classification policies apply to Genie responses without re-configuration. This pillar covers the deployment patterns, controls, and review steps that preserve that posture in production.</p>
+<h3>3.1 How Genie Executes Queries: Credential Models</h3>
+<p>Genie generates read-only SQL from natural-language questions and runs it on a SQL warehouse. The identity under which the query runs depends on the deployment pattern.</p>
+<p><strong>Important.</strong> A Genie Agent defines what users see in the UI: the tables, instructions, and examples available to them. It is <strong>not a hard data boundary</strong>. Unity Catalog permissions, row filters, and column masks define what each user can actually query. Rely on Unity Catalog grants for access enforcement, not on agent composition alone.</p>
+<p class="label">Credential behaviour by deployment pattern:</p>
+<div class="tbl"><table><tr><th><strong>Deployment Pattern</strong></th><th><strong>Who Runs the Query</strong></th><th><strong>End-User Requirements</strong></th><th><strong>Key Governance Implication</strong></th></tr><tr><td>Standalone Genie Agent</td><td>Compute credentials are embedded in the agent by the author who configures the SQL warehouse.</td><td><a href="https://docs.databricks.com/aws/en/ai-bi/consumers">Consumer access</a> (or Databricks SQL entitlement) plus SELECT on the underlying Unity Catalog objects. End users do not need direct warehouse permissions.</td><td>Unity Catalog enforces what each user can see. <a href="https://docs.databricks.com/aws/en/tables/row-and-column-filters">Row filters</a> and column masks apply based on the querying user's identity, except when using the embedded credential option within the <a href="https://docs.databricks.com/aws/en/genie-agents/embed">embedding preview</a>.</td></tr><tr><td>Dashboard Companion Agent</td><td>Depends on the dashboard's sharing model. With shared data permission, the Genie Agent uses embedded credentials (the publisher's). Otherwise, viewer credentials apply.</td><td>Access to the published dashboard.</td><td>Genie can answer questions from the full dataset query results, including fields or rows that are not visually displayed in the chart. Only include fields and rows in dashboard datasets that you intend viewers to reach through natural language.</td></tr><tr><td><a href="https://docs.databricks.com/aws/en/genie-agents/conversation-api">Conversation API (embedded apps)</a></td><td>Authentication via service principal (OAuth M2M), user OAuth token (OAuth U2M), or PAT, depending on your integration design.</td><td>Depends on the token identity and its Unity Catalog grants.</td><td>Design your API integration to use the minimum-privilege identity appropriate for the use case, and document the access model explicitly.</td></tr></table></div>
+<h3>3.2 Unity Catalog: Your Primary Security Layer</h3>
+<p>All Genie queries are governed by Unity Catalog. This means:</p>
+<div class="tbl"><table><tr><th><strong>Control</strong></th><th><strong>How It Works</strong></th></tr><tr><td>Table and view grants</td><td>A Genie Agent can only query objects on which the user has SELECT access.</td></tr><tr><td><a href="https://docs.databricks.com/aws/en/tables/row-and-column-filters">Row filters</a></td><td>Row filters defined in Unity Catalog filter the rows Genie returns, based on the querying user's identity (for example, region-based access).</td></tr><tr><td><a href="https://docs.databricks.com/aws/en/tables/row-and-column-filters">Column masks</a></td><td>Column masks defined in Unity Catalog mask or redact sensitive columns (PII, compensation, and similar) based on the querying user's identity.</td></tr><tr><td><a href="https://docs.databricks.com/aws/en/ai-bi/admin/audit">Audit logging</a></td><td>Genie interactions are captured in two places: the conversation history on the agent (questions, answers, feedback), and Unity Catalog system tables for audit events, data-access lineage, and executed SQL.</td></tr></table></div>
+<p><strong>Design principle:</strong> grant each user group access to the minimum data they need. Use curated views to simplify and constrain the queryable surface.</p>
+<h3>3.3 Access Model Design</h3>
+<p class="label">Recommended access tiers:</p>
+<div class="tbl"><table><tr><th><strong>Role</strong></th><th><strong>Genie Permission</strong></th><th><strong>Data Access</strong></th><th><strong>Typical Entitlement</strong></th></tr><tr><td>Agent owner or curator</td><td><a href="https://docs.databricks.com/aws/en/security/auth/access-control/">CAN MANAGE</a></td><td>Full access to agent tables</td><td>Databricks SQL access</td></tr><tr><td>Business user, validator, tester</td><td>CAN RUN</td><td>Governed by Unity Catalog grants, row filters, and column masks</td><td>Consumer access</td></tr><tr><td>Viewer</td><td>CAN VIEW</td><td>Read-only, no query execution</td><td>Consumer access</td></tr></table></div>
+<h4>3.3.1 Consumer access and Genie</h4>
+<p>Two related but distinct concepts:</p>
+<ul><li>
+<strong>Consumer access</strong> is a workspace entitlement for non-technical business users. It activates <a href="https://docs.databricks.com/aws/en/ai-bi/consumers">Genie</a>, dashboards, Databricks Apps, and related AI/BI experiences without requiring authoring entitlements (Workspace access or Databricks SQL access).
+</li><li><strong>Genie One</strong> (previously Databricks One) is the simplified UI that consumer-access users land in. It focuses on consumption: no SQL editor, no notebooks, only dashboards and Genie agents.
+</li></ul>
+<p class="label">Key benefits</p>
+<ul><li>
+Genie One and Genie Agents usage by users is free through January 31, 2027; service principal usage is billed. SQL warehouse compute is billed separately. See <a href="https://docs.databricks.com/aws/en/genie/monitor-cost">Monitor Genie cost</a>.
+</li><li>Simplified interface for business users.
+</li><li>Provision users via your identity provider (Azure AD, Okta, and similar).
+</li></ul>
+<h4>3.3.2 Onboarding business users to Genie</h4>
+<ul><li>
+<strong>Provision users at the account level.</strong>
+<ul><li>
+Add users through Automatic Identity Management.
+</li><li>Ensure users exist in the Databricks account before assigning the workspace.
+</li></ul>
+</li><li><strong>Assign users to the right workspace with consumer access.</strong>
+<ul><li>
+Add the users to the target workspace.
+</li><li>Grant consumer access to Genie, dashboards, and related shared assets without authoring permissions.
+</li></ul>
+</li><li><strong>Enable a custom URL (optional).</strong>
+<ul><li>
+Optionally enable a custom URL for the workspace.
+</li><li>Recommended to simplify the login experience across workspaces.
+</li></ul>
+</li></ul>
+<h4>3.3.3 Access Configuration Checklist</h4>
+<ul><li>
+Unity Catalog permissions reviewed for all Genie Agent tables.
+</li><li>Row filters applied where needed (region, department, and similar).
+</li><li>Column masks applied for sensitive data (PII, compensation, and similar).
+</li><li>Agent permissions set.
+</li><li>Audit logging enabled and reviewed.
+</li><li>Dashboard dataset scope reviewed for companion agents.
+</li><li>Credential model documented for each deployment pattern.
+</li><li>Consumer access is configured for business users.
+</li></ul>
+<h3>3.4 Compliance, Privacy, and Data Handling</h3>
+<p>Genie's compliance posture depends on your platform configuration, deployment choices, and organisational policies. This is an operational governance checklist, not a substitute for a formal compliance review. Use it to scope what your security and legal teams should validate. The items below are organised into three tiers: what is inherited automatically, what depends on your configuration, and what requires formal review.</p>
+<h4>Tier 1: Inherited from your Databricks platform controls</h4>
+<p>These items apply automatically based on your workspace and account configuration.</p>
+<div class="tbl"><table><tr><th><strong>Item</strong></th><th><strong>Description</strong></th></tr><tr><td>Unity Catalog governance</td><td>All data access is governed by Unity Catalog grants, row filters, and column masks.</td></tr><tr><td>Audit logging</td><td>Genie interactions are captured in audit logs.</td></tr><tr><td>Network controls</td><td>IP access lists, <a href="https://docs.databricks.com/aws/en/security/network/front-end/front-end-private-connect">Private Link</a>, and other network-level controls apply to Genie traffic.</td></tr><tr><td>Encryption</td><td>Data at rest and in transit is encrypted per your workspace configuration.</td></tr><tr><td>No model training on your data; zero retention by partners</td><td>Databricks does not use customer prompts, responses, or data to train foundation models (applies to all Databricks AI assistive features). <a href="https://docs.databricks.com/aws/en/databricks-ai/partner-powered">Partner-powered AI features</a> additionally use zero-data-retention endpoints from model partners.</td></tr></table></div>
+<h4>Tier 2: Dependent on your deployment and configuration choices</h4>
+<p>These items vary based on how you configure and deploy Genie.</p>
+<div class="tbl"><table><tr><th><strong>Item</strong></th><th><strong>What to validate</strong></th></tr><tr><td>Credential model</td><td>Which identity runs the query depends on the deployment pattern (see Section 3.1). Document and validate for each agent.</td></tr><tr><td>Dashboard companion data scope</td><td>Genie can access the full dataset query results, not just what is displayed visually. Review dashboard datasets before enabling the companion Genie.</td></tr><tr><td>Cross-Geo processing</td><td>AI assistive features use <a href="https://docs.databricks.com/aws/en/resources/databricks-geos">Databricks Geographic Regions (Geos)</a>. Some regions may require cross-Geo processing to be enabled. Validate your workspace's Geo configuration.</td></tr><tr><td>Conversation history storage</td><td>Genie conversation history is stored (encrypted) in the Databricks control plane. Review retention and access policies. <a href="https://docs.databricks.com/aws/en/security/keys/customer-managed-keys">Customer-managed keys</a> are supported for Genie agents created after April 2025.</td></tr><tr><td>Data sent to models</td><td>Genie sends only the data needed to fulfil the request: prompts, relevant table metadata and values, errors, and input queries. Full table contents are not sent.</td></tr><tr><td>Partner-powered AI features</td><td>Partner-powered AI features must be enabled at the account or workspace level. Enablement defaults differ for workspaces with the <a href="https://docs.databricks.com/aws/en/security/privacy/security-profile">compliance security profile (CSP)</a>.</td></tr></table></div>
+<h4>Tier 3: Requires formal security and compliance review</h4>
+<p>Validate these items with your security, legal, and compliance teams before production deployment.</p>
+<div class="tbl"><table><tr><th><strong>Item</strong></th><th><strong>Guidance</strong></th></tr><tr><td>Regulated data (HIPAA, PCI, FedRAMP, etc.)</td><td>AI assistive features can be used with regulated data when the required controls are configured, including the compliance security profile. Confirm your specific requirements with your Databricks account team and your internal compliance reviewers.</td></tr><tr><td>Data residency requirements</td><td>Confirm that your workspace Geo configuration meets your data residency requirements. Review cross-Geo processing settings.</td></tr><tr><td>AI usage policy</td><td>Confirm that your organisation's AI usage policies permit AI-assisted analytics.</td></tr><tr><td>Download and export controls</td><td>Decide whether result downloads should be restricted for Genie users. The setting lives under Workspace &gt; Settings &gt; Security &gt; "SQL results download".</td></tr><tr><td>Retention and deletion</td><td>Review conversation history retention policies and deletion capabilities.</td></tr></table></div>
+<p><strong>Important.</strong> Do not summarise compliance posture in internal documentation without linking to the current official <a href="https://docs.databricks.com/aws/en/databricks-ai/databricks-ai-trust">Databricks AI trust and safety documentation</a>. Compliance details evolve, so always reference the latest source.</p>
+<h3>3.5 Agent Ownership: Who Maintains What</h3>
+<div class="tbl"><table><tr><th><strong>Role</strong></th><th><strong>Responsibility</strong></th><th><strong>Who Should Own This</strong></th></tr><tr><td>Agent owner</td><td>Overall accuracy, instruction curation, and ongoing refinement</td><td>Senior analyst or data product owner in your organisation</td></tr><tr><td>Data steward</td><td>Table quality, metadata accuracy, and data freshness</td><td>Data engineering team</td></tr><tr><td>Security reviewer</td><td>Permissions audit, row-level security verification</td><td>Security or governance team</td></tr><tr><td>Feedback reviewer</td><td>Monitor user questions, identify places to improve</td><td>Agent owner or designated analyst</td></tr></table></div>
+<p><strong>Important.</strong> Assign an ongoing agent owner within your organisation. Agents that are not actively monitored and maintained degrade in accuracy over time as business terminology, underlying data, and user needs evolve.</p>
+<h3>3.6 Governing Domains, Pages and certification <span class="tag new">New</span></h3>
+<div class="tbl"><table><tr><th>Capability</th><th>Who</th><th>Permission</th></tr><tr><td>Manage all domains, Pages and the Discover page</td><td>Curators (account and workspace admins by default)</td><td><code>MANAGE DISCOVER</code> at account level</td></tr><tr><td>Manage one domain or subdomain and its Pages</td><td>Domain curators</td><td><code>MANAGE DOMAIN</code></td></tr><tr><td>Publish and manage Pages without managing the domain</td><td>Page managers</td><td><code>MANAGE PAGES</code></td></tr><tr><td>Certify or deprecate assets</td><td>Data stewards</td><td><code>ASSIGN</code> on the <code>system.certification_status</code> governed tag, plus <code>APPLY TAG</code> on the object</td></tr></table></div>
+<ul><li><strong>No sensitive data in Pages.</strong> Pages are account-level, encrypted with Databricks-managed keys (customer-managed keys are not supported) and may be replicated globally. Keep PII and regulated data out of Page names, descriptions, synonyms and body text.</li><li><strong>Genie One runs as the user.</strong> Answers use the asking user's Unity Catalog privileges, row filters and column masks; <a href="https://docs.databricks.com/aws/en/ai-bi/consumers">consumer access</a> is the least-privileged entitlement that works for chat.</li><li><strong>Account-only users</strong> <span class="tag st">Beta</span>: users from your identity provider without workspace access get a limited Genie One experience. See <a href="https://docs.databricks.com/aws/en/genie-one/account-only-user-access">Account-only user access</a>.</li><li><strong>Private connectivity</strong>: account-level Genie One can be reached over <a href="https://docs.databricks.com/aws/en/security/network/front-end/front-end-private-connect-account">front-end private connectivity</a> <span class="tag st">Beta</span>.</li><li><strong>Service principals are billed.</strong> Prefer user identity (OAuth U2M or on-behalf-of) where possible, and set <a href="https://docs.databricks.com/aws/en/genie/budgets">Genie budgets</a> for any service-principal integration.</li></ul></section><section id="4-enablement-change-management"><div class="sec-k">4. Enablement &amp; Change Management</div><h2>Pillar 4: Enablement &amp; Change Management</h2>
+<p>Successful adoption depends on users understanding the tool, trusting it, and knowing how to use it effectively. This pillar outlines the enablement activities and change management considerations for a Genie deployment.</p>
+<h3>4.1 Stakeholder Engagement</h3>
+<p>Different stakeholders need different messages:</p>
+<div class="tbl"><table><tr><th><strong>Stakeholder</strong></th><th><strong>What They Need to Know</strong></th><th><strong>Engagement Approach</strong></th></tr><tr><td>Executive Sponsors</td><td>Business value, ROI, strategic priorities served</td><td>Executive demo using their organisation's own data</td></tr><tr><td>Data Platform Leaders</td><td>Architecture, governance, integration with existing stack</td><td>Demo &amp; technical deep-dive on Unity Catalog integration</td></tr><tr><td>Agent Authors / Curators</td><td>How to build, test, validate, and maintain agents</td><td>2-day hands-on workshop with their actual data</td></tr><tr><td>Business Users</td><td>How to ask questions and interpret results. Verify results, provide feedback.</td><td>30-minute introduction plus guided first experience</td></tr><tr><td>IT / Security</td><td>Compliance, permissions, data privacy, audit trail</td><td>Security architecture review with compliance documentation</td></tr></table></div>
+<h3>4.2 Recommended Training Program</h3>
+<p>Training should be tailored to the role each group plays in the deployment.</p>
+<h4>For Agent Authors / Curators (technical)</h4>
+<div class="tbl"><table><tr><th><strong>Module</strong></th><th><strong>Duration</strong></th><th><strong>Content</strong></th></tr><tr><td>Genie Fundamentals</td><td>2 hours</td><td>How Genie works, architecture, capabilities and limitations</td></tr><tr><td>Data Preparation</td><td>2 hours</td><td>Metadata, comments, views, Metric Views</td></tr><tr><td>Agent Configuration</td><td>3 hours</td><td>Knowledge Store, SQL expressions, example SQL, joins, synonyms</td></tr><tr><td>Trusted Responses</td><td>1 hour</td><td>When and how to create trusted queries and functions</td></tr><tr><td>Benchmarking &amp; Iteration</td><td>2 hours</td><td>Building benchmark suites, interpreting results, iterating</td></tr><tr><td>Monitoring &amp; Operations</td><td>1 hour</td><td>Monitoring tab, audit logs, feedback loops</td></tr></table></div>
+<h4>For Business Users (non-technical)</h4>
+<div class="tbl"><table><tr><th><strong>Module</strong></th><th><strong>Duration</strong></th><th><strong>Content</strong></th></tr><tr><td>Getting Started with Genie</td><td>30 min</td><td>What Genie is, what it can and cannot do, how to ask questions</td></tr><tr><td>Asking Effective Questions</td><td>30 min</td><td>Tips for getting better answers, using business terms, being specific</td></tr><tr><td>Understanding Responses</td><td>20 min</td><td>How to read results, what "Trusted" means, when to verify</td></tr><tr><td>Giving Feedback</td><td>10 min</td><td>How to use thumbs up / thumbs down, how feedback improves the agent</td></tr></table></div>
+<p>The training content is available on the Databricks training catalog under <a href="https://www.databricks.com/training/catalog/aibi-for-data-analysts-3707">AI/BI for Data Analysts</a>. For tailored sessions and workshops, reach out to your Databricks team.</p>
+<h3>4.3 Prompt Guide Template</h3>
+<p>Create a prompt guide for each agent with the following sections.</p>
+<p class="label">Good question patterns</p>
+<ul><li>
+"What was total revenue by region last quarter?"
+</li><li>"Show me the top 10 customers by lifetime value."
+</li><li>"How does this month's churn rate compare to last month?"
+</li></ul>
+<p class="label">Tips for better answers</p>
+<ul><li>
+Be specific about time periods, filters, and metrics.
+</li><li>Use the business terms defined in your agent, for example, "ARR" rather than "annual recurring revenue" if that is the configured synonym.
+</li><li>Start simple, then add complexity.
+</li></ul>
+<p class="label">Out-of-scope topics</p>
+<ul><li>
+Questions about data not in this agent.
+</li><li>Questions that require real-time data if the agent uses batch-refreshed tables.
+</li></ul>
+<h3>4.4 Building Trust</h3>
+<p>Build trust through four practices:</p>
+<ul><li>
+<strong>Transparency.</strong> Show users the SQL behind every answer, and encourage them to verify against known reports.
+</li><li><strong>Trusted assets.</strong> Use <a href="https://docs.databricks.com/aws/en/genie-agents/tune-quality#trusted-assets">Trusted Assets</a> for critical KPIs so users can identify validated responses by the "Trusted" badge in the UI.
+</li><li><strong>Feedback loops.</strong> Make it easy to report incorrect answers and show that user feedback drives improvements.
+</li><li><strong>Gradual expansion.</strong> Start with a small group of power users, then expand as confidence grows.
+</li></ul>
+<h4>4.4.1 Overcoming Common Resistance</h4>
+<div class="tbl"><table><tr><th><strong>What Users Say</strong></th><th><strong>Why They Say It</strong></th><th><strong>How to Address It</strong></th></tr><tr><td>"I don't trust AI-generated answers"</td><td>Concern about accuracy and reliability</td><td>Expose the transparency of the process by describing the thinking steps directly in the Genie Agent UI. Demonstrate that users can see the exact SQL generated, for full transparency. Highlight Unity Catalog governance.</td></tr><tr><td>"This will replace my role"</td><td>Fear of job displacement</td><td>Explain that Genie reduces time spent writing routine SQL, while analysts remain responsible for interpreting results and handling strategic work.</td></tr><tr><td>"My existing dashboards work fine"</td><td>Change resistance, switching costs</td><td>Explain that Genie can sit alongside existing dashboards. Dashboard Companion lets users ask follow-up questions on charts they are already viewing.</td></tr><tr><td>"How do I know the data is right?"</td><td>Concern about data quality</td><td>Metric Views provide consistent metric definitions across tools. Trusted Assets produce validated results. All queries run against the same governed data.</td></tr><tr><td>"Seems hard to maintain"</td><td>Concern about ongoing effort</td><td>Show the monitoring tab and benchmark automation. Agents improve continuously from user feedback. The curation effort decreases as the agent matures.</td></tr><tr><td>"Can Genie Agents access data outside Databricks?"</td><td>Concern about data scope</td><td>Genie Agents can only query data registered in Unity Catalog (managed, external, foreign, and view objects). They cannot natively reach arbitrary SaaS apps or external databases unless that data is surfaced into Unity Catalog first. <a href="https://docs.databricks.com/aws/en/query-federation/">Lakehouse Federation</a> lets you register external systems (Snowflake, SQL Server, PostgreSQL, BigQuery, and others) as foreign catalogs that Genie can then query directly without data movement, although we recommend creating views on top.</td></tr></table></div>
+<h3>4.5 Measuring Adoption Success</h3>
+<p>Track these metrics through the rollout. The benchmark-accuracy targets are based on Databricks-published guidance for production-ready Genie Agents; the rest are field-recommended starting points that you should calibrate to your organisation.</p>
+<div class="tbl"><table><tr><th><strong>Metric</strong></th><th><strong>3-Month Target</strong></th><th><strong>6-Month Target</strong></th></tr><tr><td>Trained agent authors</td><td>5 to 10</td><td>15 to 25</td></tr><tr><td>Active business users</td><td>50</td><td>200+</td></tr><tr><td>Genie Agents in production</td><td>3 to 5</td><td>10 to 15</td></tr><tr><td>Weekly active users</td><td>20</td><td>100+</td></tr><tr><td>Benchmark accuracy</td><td>≥80%</td><td>≥85%</td></tr><tr><td>User satisfaction (positive feedback %)</td><td>&gt;70%</td><td>&gt;80%</td></tr></table></div>
+<h3>4.6 Help users find the right answer <span class="tag new">New</span></h3>
+<ul><li>Point users to <a href="https://docs.databricks.com/aws/en/genie-one/">Genie One</a> as the front door, and <a href="https://docs.databricks.com/aws/en/genie-one/customize-genie-homepage">customise the Genie One homepage</a> with your brand, a welcome message and pinned agents and dashboards.</li><li>Curate the <a href="https://docs.databricks.com/aws/en/discover/discover-page">Discover page</a> and domain layouts so business users browse by business area, not by catalog.</li><li>Link the key <a href="https://docs.databricks.com/aws/en/uc-semantics/pages">Pages</a> from your prompt guide: they are the shared glossary that Genie One cites.</li><li>Meet users where they work: <a href="https://docs.databricks.com/aws/en/genie-one/genie-slack">Genie One in Slack</a>, <a href="https://docs.databricks.com/aws/en/integrations/msft-teams">Microsoft Teams</a> and mobile.</li></ul></section><section id="5-monitoring-continuous-improvement"><div class="sec-k">5. Monitoring &amp; Continuous Improvement</div><h2>Pillar 5: Monitoring &amp; Continuous Improvement</h2>
+<p>Maintain and improve Genie quality after launch. This pillar covers the monitoring, feedback, benchmarking, and review practices that keep an agent accurate and useful over time.</p>
+<h3>5.1 Monitoring Tools</h3>
+<p>Databricks provides built-in monitoring at multiple levels through the <a href="https://docs.databricks.com/aws/en/genie-agents/monitor">Monitor tab</a>, <a href="https://docs.databricks.com/aws/en/ai-bi/admin/audit">audit logs</a>, and <a href="https://docs.databricks.com/aws/en/admin/system-tables/">system tables</a>.</p>
+<h4>5.1.1 Monitor tab</h4>
+<p>For agent owners, the Monitor tab helps you:</p>
+<ul><li>
+View every question users have asked.
+</li><li>See which questions received positive or negative feedback.
+</li><li>Identify patterns, including which questions the agent struggles with.
+</li><li>Review requests where users have flagged responses that need attention.
+</li><li>Track weekly digest signals: message volume, active users, and thumbs-up / thumbs-down rates.
+</li></ul>
+<p><strong>Important.</strong> Thumbs up / thumbs down do not automatically change the agent. Authors review feedback and decide what to act on.</p>
+<h4>5.1.2 Audit logs</h4>
+<p>Audit logs (captured in system.access.audit with service_name = 'aibiGenie') help you:</p>
+<ul><li>
+Track who accessed which agents and when.
+</li><li>Monitor conversation volumes and user activity trends.
+</li><li>Set up alerts for unusual patterns such as spikes in negative feedback, approaching budgets, or rising error rates. Alerts are configured as Databricks SQL Alerts on queries against the audit system tables; there is no Genie-native alert mechanism.
+</li></ul>
+<h4>5.1.3 System tables</h4>
+<p>System tables expose Genie activity for analysis and cost attribution:</p>
+<ul><li>
+system.query.history: all Genie-generated SQL queries, their duration, and success or failure rates. Filter for Genie traffic with WHERE query_source.genie_space_id IS NOT NULL, or for a single agent with WHERE query_source.genie_space_id = '&lt;space-id&gt;'.
+</li><li>system.billing.usage: cost of Genie usage via SQL warehouse consumption.
+</li><li>system.compute.warehouse_events: compute scaling events triggered by Genie query load.
+</li><li>system.access.audit: per-event audit records (also surfaced in 5.1.2 above).
+</li></ul>
+<h3>5.2 The Feedback-to-Curation Loop</h3>
+<p>User feedback is the primary signal for keeping Genie quality high over time. Treat it as a repeatable operating loop rather than an occasional clean-up task.</p>
+<ul><li>
+<strong>Capture</strong> feedback from the Monitor tab: thumbs-up / thumbs-down signals, review requests, and recurring unanswered questions.
+</li><li><strong>Triage</strong> the feedback by separating one-off issues from repeatable gaps, and prioritise questions tied to important business workflows.
+</li><li><strong>Curate</strong> the agent by updating instructions, adding <a href="https://docs.databricks.com/aws/en/genie-agents/tune-quality#trusted-assets">Trusted Assets</a>, and expanding entity matching when users introduce new terminology.
+</li><li><strong>Validate</strong> the change by rerunning the relevant benchmark questions and checking whether the issue is resolved without breaking existing coverage.
+</li><li><strong>Apply and observe.</strong> Record the change in the curation log, then monitor the same question patterns to confirm the improvement holds.
+</li></ul>
+<h3>5.3 Benchmarking: Measuring Accuracy Systematically</h3>
+<p>Benchmarks are a quality-assurance framework for Genie Agents. Use a benchmark suite of representative business questions, each with multiple phrasings, paired with their expected correct SQL answers. Run the suite against the agent and measure the percentage of Genie's predictions that are correct.</p>
+<p>Databricks <a href="https://www.databricks.com/blog/how-build-production-ready-genie-spaces-and-build-trust-along-way">recommends</a> aiming for 10 to 20 representative questions, with 2 to 4 phrasings each (roughly 30 to 80 benchmarks total). The product supports up to 500 benchmarks per agent.</p>
+<h4>5.3.1 How to Use Benchmarks</h4>
+<ul><li>
+Create a benchmark suite covering the most important question categories.
+</li><li>Run the suite after every significant change to instructions or data.
+</li><li>Track accuracy over time; it should trend upward.
+</li><li>Use benchmarks as a gate: do not promote an agent to production unless it achieves ≥80% accuracy.
+</li><li>Use <strong>Auto-suggested benchmarks</strong> to bootstrap the suite. Genie can suggest test questions based on the agent's tables, columns, and SQL examples.
+</li></ul>
+<h4>5.3.2 Key Metrics to Track</h4>
+<p>The ≥80% benchmark-accuracy target is Databricks-published guidance. The other metrics below are field-recommended signals; calibrate the targets to your organisation.</p>
+<div class="tbl"><table><tr><th><strong>Metric</strong></th><th><strong>How to Measure</strong></th><th><strong>What to Look For</strong></th></tr><tr><td>Benchmark accuracy</td><td>Benchmark feature</td><td>Stable or improving over time; ≥80% before production</td></tr><tr><td>Thumbs-up rate</td><td>Monitor tab</td><td>Trending upward</td></tr><tr><td>Questions per user per week</td><td>Audit logs (system.access.audit)</td><td>Growing adoption</td></tr><tr><td>Error rate</td><td>Monitor tab</td><td>Declining over time</td></tr><tr><td>Trusted asset coverage on top questions</td><td>Agent configuration</td><td>Increasing for high-frequency / high-cost questions</td></tr><tr><td>Time-to-insight</td><td>User survey</td><td>Measurable improvement</td></tr></table></div>
+<h4>5.3.3 Benchmark Categories to Cover</h4>
+<ul><li>
+Simple aggregations ("What is total revenue?")
+</li><li>Time-based queries ("How did sales compare month over month?")
+</li><li>Filtered queries ("Show me only enterprise customers")
+</li><li>Multi-table joins ("Which products did our top customers buy?")
+</li><li>Top-N rankings ("Who are our top 10 accounts by revenue?")
+</li><li>Complex business logic ("What is our customer churn rate?")
+</li></ul>
+<h3>5.4 The Continuous Improvement Checklist</h3>
+<ul><li>
+Monitor tab reviewed on schedule.
+</li><li>Audit-log alerts configured (via Databricks SQL Alerts on system.access.audit).
+</li><li>Benchmark re-run schedule established.
+</li><li>Feedback-to-curation loop documented and active.
+</li><li>Curation change log maintained.
+</li><li>Quarterly agent health review scheduled.
+</li></ul>
+<h4>5.4.1 Example Review Cycle</h4>
+<p>The cadence below is a field-recommended starting point. Calibrate it to the maturity of the agent and the volume of user feedback.</p>
+<p class="label">Weekly</p>
+<ul><li>
+Review the Monitor tab for new question patterns.
+</li><li>Check for questions with negative feedback.
+</li><li>Note questions Genie could not answer.
+</li></ul>
+<p class="label">Every two weeks</p>
+<ul><li>
+Add new <a href="https://docs.databricks.com/aws/en/genie-agents/tune-quality#trusted-assets">Trusted Assets</a> for frequently asked questions.
+</li><li>Update entity matching if users introduce new terminology.
+</li><li>Address any review requests from users.
+</li></ul>
+<p class="label">Monthly</p>
+<ul><li>
+Run the full benchmark suite.
+</li><li>Review accuracy trends: Is the agent improving?
+</li><li>Review trusted asset coverage on the top questions.
+</li><li>Discuss feedback themes with business stakeholders.
+</li></ul>
+<p class="label">Quarterly</p>
+<ul><li>
+Conduct a full agent audit; remove outdated instructions and update metric definitions.
+</li><li>Review data freshness and schema changes.
+</li><li>Reassess whether the scope of the agent still matches user needs.
+</li><li>Consider whether new agents are needed for emerging use cases.
+</li></ul>
+<h3>5.5 Automate quality and cost checks <span class="tag new">New</span></h3>
+<ul><li><strong>Benchmarks in CI</strong> <span class="tag st">Beta</span>: start a benchmark evaluation run through the API or CLI (<a href="https://docs.databricks.com/aws/en/dev-tools/cli/reference/genie-commands">genie commands</a>) and fail the pipeline below your accuracy threshold.</li><li><strong>Diagnose with Genie Code</strong>: <a href="https://docs.databricks.com/aws/en/genie-agents/monitor#analyze-a-benchmark-run-with-genie-code">analyse a benchmark run</a> or <a href="https://docs.databricks.com/aws/en/genie-agents/monitor#debug-responses-with-genie-code">debug a response</a> to find which context to fix.</li><li><strong>Cost</strong>: monitor Genie usage with <a href="https://docs.databricks.com/aws/en/genie/monitor-cost">Genie cost monitoring</a> and <code>system.billing.usage</code>, and set account, workspace or per-user <a href="https://docs.databricks.com/aws/en/genie/budgets">budgets</a>.</li><li><strong>Ontology readiness</strong>: assess metadata, relationships, metric views, Genie Agents and domains with the open-source <a href="https://github.com/databricks-solutions/genie-ontology-readiness">Genie Ontology Readiness</a> app, and repeat it each quarter.</li></ul></section><section id="6-integration-embedding"><div class="sec-k">6. Integration &amp; Embedding</div><h2>Pillar 6 (Optional): Integration &amp; Embedding</h2>
+<p>Genie Agents work best when users can access them directly in Genie One (previously Databricks One), as that provides the richest native experience. If your channel strategy requires users to stay in other tools, you can also extend Genie into dashboards, APIs, collaboration tools, and custom applications.</p>
+<h3>6.1 Consumption Channels</h3>
+<div class="tbl"><table><tr><th><strong>Channel</strong></th><th><strong>Best For</strong></th><th><strong>Setup Effort</strong></th><th><strong>Description</strong></th></tr><tr><td>Genie Agent UI (workspace)</td><td>Data teams, analysts</td><td>Immediate</td><td>Native Databricks experience with the broadest feature coverage</td></tr><tr><td>Dashboard Companion</td><td>Dashboard consumers</td><td>Immediate</td><td>Ask follow-up questions on published AI/BI dashboards through the companion Genie Agent</td></tr><tr><td>Genie One (consumer access)</td><td>Broad business rollout</td><td>Days</td><td>Simplified landing experience for business users, with no SQL knowledge required</td></tr><tr><td>Conversation API</td><td>Custom apps, portals, chatbots</td><td>2 to 3 weeks</td><td>Programmatic access for branded or embedded experiences</td></tr><tr><td>Microsoft Teams (Copilot Studio)</td><td>Organisations using M365</td><td>1 to 2 weeks</td><td>Low-code integration through the <a href="https://docs.databricks.com/aws/en/integrations/msft-power-platform">Databricks connector for Microsoft Power Platform</a></td></tr><tr><td>Microsoft Teams / Slack (custom bot)</td><td>Full UI control</td><td>3 to 4 weeks</td><td>Custom bot with branded workflows, prompts, and controls</td></tr></table></div>
+<p><strong>Note.</strong> Databricks does not publish a fixed user-count threshold for external integrations. As field guidance, if you expect around 500 concurrent users or sustained high-volume API traffic, validate routing, SQL warehouse sizing, request queuing, and end-to-end latency early.</p>
+<h3>6.2 Choosing Your Integration Path</h3>
+<p>For most enterprise rollouts, we recommend a phased approach:</p>
+<ul><li>
+Start with Genie UI and Dashboard Companion for initial validation. This gives you the richest feature set for testing and tuning.
+</li><li>Add Genie consumer access for broad business rollout once the agent is production-quality. This is usually the lowest-friction path to bring non-technical users onto Genie.
+</li><li>Add Teams, Slack, or custom integrations after the agent is production-quality, for specific business cases that need them.
+</li></ul>
+<h3>6.3 Conversation API for Custom Experiences</h3>
+<p>The <a href="https://docs.databricks.com/aws/en/genie-agents/conversation-api">Conversation API</a> lets you embed Genie in custom applications, chatbots, and portals. The same surface area also exposes the Genie Agents management APIs for creating, configuring, backing up, and promoting agents across workspaces.</p>
+<p class="label">Key capabilities</p>
+<ul><li>
+Start and continue multi-turn conversations programmatically.
+</li><li>Send questions and receive structured responses.
+</li><li>Retrieve generated SQL, query results, message status, and metadata.
+</li><li>Manage Genie Agent configuration through the management APIs.
+</li></ul>
+<p class="label">Authentication options</p>
+<ul><li>
+<a href="https://docs.databricks.com/aws/en/dev-tools/auth/oauth-m2m">OAuth M2M for service principals</a>, for server-side applications and unattended workloads.
+</li><li><a href="https://docs.databricks.com/aws/en/dev-tools/auth/oauth-u2m">OAuth U2M for users</a>, when a browser-based user flow is available.
+</li></ul>
+<p class="label">Best practices for API integration</p>
+<ul><li>
+Poll message status every 1 to 5 seconds until you receive a conclusive state, such as COMPLETED, FAILED, or CANCELLED.
+</li><li>Use exponential backoff for retries and polling, increasing the delay up to one minute for long-running queries.
+</li><li>Start a new conversation for each user session to avoid unintended context reuse, which can reduce accuracy.
+</li><li>Implement request queuing, retry logic, and logging in the calling application.
+</li><li>Stop polling after about 10 minutes for most queries, then return a timeout or manual follow-up path.
+</li><li>Stay under the limit of 200,000 conversations per agent: list and delete old or test conversations with the API.
+</li><li>Render charts in your own UI if needed. The API returns structured tabular results and SQL, not rendered visualisations.
+</li></ul>
+<p class="label">Planning considerations</p>
+<ul><li>
+Use the minimum-privilege identity model for each integration.
+</li><li>Curate and benchmark the Genie Agent before exposing it through the API.
+</li><li>Plan SQL warehouse capacity explicitly. Every Genie query still runs on the attached warehouse.
+</li><li>Expect some lag between new UI features and API availability.
+</li><li>Use the management APIs to export and recreate agent configuration across environments.
+</li></ul>
+<h3>6.4 Environment Promotion</h3>
+<p>For enterprise deployments, keep promotion explicit and repeatable:</p>
+<ul><li>
+Use the Genie Agents management APIs to move agent configuration between environments. If you already standardise delivery with <a href="https://docs.databricks.com/aws/en/dev-tools/bundles/">Declarative Automation Bundles</a> (previously Databricks Asset Bundles), keep the surrounding deployment workflow in the same promotion pipeline. Bundles support Genie Agents natively: the <code>genie_spaces</code> resource (Databricks CLI 1.3.0 or later, direct deployment engine) deploys an agent from a <code>.geniespace.json</code> file kept in Git, and <code>databricks bundle generate genie-space</code> exports an agent built in the UI. See <a href="https://docs.databricks.com/aws/en/dev-tools/bundles/resources#genie_space">genie_space resource</a> and the <a href="https://github.com/koritadenada/genie-deployment-checklist/tree/main/cicd-example">Genie Agent CI/CD example</a> (dev, staging and prod with a benchmark gate). The management APIs remain available for custom pipelines.
+</li><li>Maintain separate catalogues for dev, staging, and production data.
+</li><li>Re-run benchmarks before every promotion.
+</li></ul>
+<h3>6.5 One front door across agents: Genie One</h3>
+<p>For organisations with many Genie Agents, <a href="https://docs.databricks.com/aws/en/genie-one/">Genie One</a> is the conversational entry point: it searches the available Genie Agents for one relevant to the question, and otherwise searches the data assets the user can access, citing its sources. Answers always run as the asking user, so Unity Catalog permissions, row filters and column masks apply.</p>
+<p>Keep agents few, focused and well described, and use domains and certification so Genie One routes well; the documentation notes that many overlapping agents reduce routing accuracy. To coordinate agents in code with custom routing, use the <a href="https://docs.databricks.com/aws/en/agents/custom-agents/agent-bricks-cli">Agent Bricks CLI</a>. The Agent Bricks Supervisor Agent is now a <a href="https://docs.databricks.com/aws/en/agents/legacy">legacy offering</a> and is not recommended for new systems.</p>
+<h3>6.6 Throughput Planning</h3>
+<p>For API-based integrations, plan on observed demand rather than theoretical peak usage.</p>
+<p><strong>Key insight.</strong> In practice, the concurrent query rate is much lower than the peak user count. This is because:</p>
+<ul><li>
+Users pause to read and interpret results between questions.
+</li><li>Load tends to arrive in short bursts rather than as a continuous stream.
+</li><li>Application-side caching and queuing can reduce the number of repeated calls.
+</li><li>Time-zone distribution often smooths demand in larger deployments.
+</li></ul>
+<p class="label">Recommended approach</p>
+<ul><li>
+Start with a small pilot cohort and measure actual query patterns.
+</li><li>Monitor peak concurrent queries per minute over at least 30 days.
+</li><li>Right-size capacity using observed traffic, not headline user counts.
+</li><li>Scale incrementally as adoption expands.
+</li></ul>
+<p class="label">Throughput</p><ul><li>Genie moved to pay-as-you-go in July 2026 and no fixed questions-per-minute caps apply to the Databricks UI or the Conversation API.</li><li>Capacity is shared: design for temporary 429 responses during spikes with retries and backoff.</li><li>Real throughput is set by the SQL warehouse behind the agent; queries running longer than five minutes are cancelled.</li><li>For dedicated capacity, contact your Databricks account team.</li></ul>
+<h3>6.7 AI assistants and MCP <span class="tag new">New</span></h3>
+<ul><li><strong><a href="https://docs.databricks.com/aws/en/agents/mcp-tools/genie-mcp">Genie One MCP</a></strong>: give AI assistants and coding agents natural-language analytics across your governed data, grounded in Genie Ontology, with the caller's Unity Catalog permissions.</li><li><strong><a href="https://docs.databricks.com/aws/en/agents/mcp-tools/genie-agent">Genie Agent MCP</a></strong> <span class="tag st">Public Preview</span>: expose one curated Genie Agent as an MCP tool when the caller already knows the domain.</li><li>Benchmark the agent before exposing it through MCP, exactly as for the Conversation API.</li></ul></section>
+<footer><p>Product details change quickly. Always check the linked Databricks documentation for the current status of preview features (<span class="tag st">Beta</span>, <span class="tag st">Public Preview</span>) and for the latest
+<a href="https://docs.databricks.com/aws/en/databricks-ai/databricks-ai-trust">Databricks AI trust and safety</a> information. Links point to the AWS documentation; the same pages exist for Azure and Google Cloud.</p></footer>
+</main></div>
+</body></html>
