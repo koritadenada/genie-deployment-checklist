@@ -1,4 +1,0 @@
-# Copy to local.mk (not committed) and fill in. Every make command then uses these values.
-# The profile is the name you used with: databricks auth login --profile <name>
-PROFILE = my-dev
-VARS    = --var warehouse_id=<sql warehouse id>

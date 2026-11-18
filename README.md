@@ -8,5 +8,5 @@ published with GitHub Pages: **https://koritadenada.github.io/genie-deployment-c
   certification, bundles and MCP. Progress and milestone owners are saved in the browser.
 - `genie-deployment-guide.html`: the full deployment guide, downloadable from the checklist's
   **Get Genie Deployment document** button.
-- [`cicd-example/`](cicd-example/): a Genie Agent CI/CD pipeline with dev, staging and prod, deployed benchmarks and a
-  benchmark gate that only promotes to prod above 80% accuracy.
+- CI/CD for Genie Agents lives in its own repository, ready to copy: [koritadenada/genie-agents-ci-cd](https://github.com/koritadenada/genie-agents-ci-cd)
+  (dev, staging and prod, deployed benchmarks, and a benchmark gate that only promotes to prod above 80% accuracy).

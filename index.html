@@ -126,7 +126,7 @@ footer.ft{color:var(--muted);font-size:13px;padding:6px 0 40px}
     <p class="lede">Work through the steps from a validated Genie Agent to an enterprise rollout. It follows the Genie Agents Enterprise Deployment Guide, including Genie One, Domains, Pages, certification, bundles and MCP. Your progress is saved in this browser.</p>
     <div class="actions">
       <a class="btn primary" href="genie-deployment-guide.html" download="Genie-Agents-Enterprise-Deployment-Guide.html"><svg class="ic"><use href="#i-down"/></svg>Get Genie Deployment document</a>
-      <a class="btn ghost" href="https://github.com/koritadenada/genie-deployment-checklist/tree/main/cicd-example" target="_blank" rel="noopener"><svg class="ic"><use href="#i-git"/></svg>Genie Agent CI/CD pipeline</a>
+      <a class="btn ghost" href="https://github.com/koritadenada/genie-agents-ci-cd" target="_blank" rel="noopener"><svg class="ic"><use href="#i-git"/></svg>Genie Agent CI/CD pipeline</a>
       <button class="btn ghost" onclick="window.print()"><svg class="ic"><use href="#i-print"/></svg>Print or save as PDF</button>
     </div>
   </div>
@@ -445,7 +445,7 @@ window.CHECKLIST = [
         { id: "p5m", t: "Quarterly: full audit, data freshness and schema changes, scope review." },
       ]},
       { title: "5.5 Automate quality and cost checks", isNew: 1, items: [
-        { id: "p5n", n: 1, s: "Beta", t: "Benchmarks run in CI through the API and block promotion below the threshold. See the CI/CD example.", d: "dev-tools/cli/reference/genie-commands", ex: "cicd-example/" },
+        { id: "p5n", n: 1, s: "Beta", t: "Benchmarks run in CI through the API and block promotion below the threshold. See the CI/CD example.", d: "dev-tools/cli/reference/genie-commands", ex: 1 },
         { id: "p5o", n: 1, t: "Failing benchmarks diagnosed with Genie Code.", d: "genie-agents/monitor#analyze-a-benchmark-run-with-genie-code" },
         { id: "p5p", n: 1, t: "Genie cost monitored, with budgets per account, workspace or user.", d: "genie/budgets" },
         { id: "p5q", n: 1, t: "Genie Ontology readiness assessed each quarter.", u: "https://github.com/databricks-solutions/genie-ontology-readiness" },
@@ -469,9 +469,9 @@ window.CHECKLIST = [
         { id: "p6h", t: "Agent curated and benchmarked before it is exposed through the API." },
       ]},
       { title: "6.4 Environment promotion", items: [
-        { id: "p6i", n: 1, t: "Agent deployed with the bundle genie_spaces resource from Git, dev to staging to prod.", d: "dev-tools/bundles/resources#genie_space", ex: "cicd-example/" },
+        { id: "p6i", n: 1, t: "Agent deployed with the bundle genie_spaces resource from Git, dev to staging to prod.", d: "dev-tools/bundles/resources#genie_space", ex: 1 },
         { id: "p6j", t: "Separate catalogs for dev, staging and production data." },
-        { id: "p6k", t: "Benchmarks rerun before every promotion.", ex: "cicd-example/" },
+        { id: "p6k", t: "Benchmarks rerun before every promotion.", ex: 1 },
       ]},
       { title: "6.5 One front door across agents", isNew: 1, items: [
         { id: "p6l", n: 1, t: "Genie One as the entry point across agents: it finds a matching agent, otherwise searches data assets.", d: "genie-one/chat" },
@@ -493,7 +493,7 @@ window.CHECKLIST = [
 (function () {
   const BASE = { aws: "https://docs.databricks.com/aws/en/", azure: "https://learn.microsoft.com/en-us/azure/databricks/", gcp: "https://docs.databricks.com/gcp/en/" };
   const KEY = "genie-deployment-checklist-v1";
-  const CICD = "https://github.com/koritadenada/genie-deployment-checklist/tree/main/cicd-example";
+  const CICD = "https://github.com/koritadenada/genie-agents-ci-cd";
   const state = Object.assign({ done: {}, tracker: {}, cloud: "aws", onlyNew: false }, JSON.parse(localStorage.getItem(KEY) || "{}"));
   const save = () => localStorage.setItem(KEY, JSON.stringify(state));
   const esc = (t) => String(t).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));

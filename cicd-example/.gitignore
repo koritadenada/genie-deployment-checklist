@@ -1,5 +1,0 @@
-.databricks/
-__pycache__/
-*.pyc
-.venv/
-local.mk
