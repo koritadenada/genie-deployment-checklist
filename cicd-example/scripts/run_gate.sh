@@ -1,19 +1,20 @@
 #!/usr/bin/env bash
 # Run the benchmark gate job for one target, print its report, and exit non-zero when it fails.
-#   scripts/run_gate.sh <dev|staging|prod>
+#   scripts/run_gate.sh <dev|staging|prod> [extra bundle options, for example --var warehouse_id=<id>]
 # The job itself emails var.alert_email on failure; this script makes the reasons visible in CI
 # (log and, on GitHub Actions, the job summary).
 set -uo pipefail
-TARGET="${1:?usage: run_gate.sh <target>}"
+TARGET="${1:?usage: run_gate.sh <target> [bundle options]}"
+shift
 cd "$(dirname "$0")/.."
 
-JOB_ID=$(databricks bundle summary -t "$TARGET" -o json | jq -r '.resources.jobs.benchmark_gate.id')
+JOB_ID=$(databricks bundle summary -t "$TARGET" "$@" -o json | jq -r '.resources.jobs.benchmark_gate.id')
 [ -n "$JOB_ID" ] && [ "$JOB_ID" != "null" ] || { echo "benchmark_gate job not deployed for $TARGET"; exit 1; }
 
 echo "Running the benchmark gate (job $JOB_ID) on $TARGET ..."
 # Keep the run output out of the log here: the report is printed once, below, from the task output.
 RUN_LOG=$(mktemp)
-databricks bundle run benchmark_gate -t "$TARGET" > "$RUN_LOG" 2>&1
+databricks bundle run benchmark_gate -t "$TARGET" "$@" > "$RUN_LOG" 2>&1
 RC=$?
 grep -E '^(Run URL|[0-9]{4}-[0-9]{2}-[0-9]{2} )' "$RUN_LOG"
 

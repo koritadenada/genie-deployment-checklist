@@ -1,13 +1,16 @@
-# The Genie Agent, defined as code. Table names use ${var.catalog} and ${var.schema}, so the same
-# definition deploys to the dev, staging and prod catalogs. The benchmarks at the end deploy with the agent
-# and are what the benchmark gate runs. To pull edits made in the UI back into this file, run
-# scripts/pull_agent.py (see README).
+# The Genie Agent, defined as code.
+# - Table names use ${var.catalog} and ${var.schema}, so the same definition deploys to dev, staging and prod.
+# - The benchmarks at the end deploy with the agent; the benchmark gate runs them after every deployment.
+# - Every list item needs an id: 32 lowercase hex characters, unique, lists sorted by id. Numbering by hand
+#   with a letter per kind (a = sample question, b = benchmark, c = instruction, d = example SQL) does that.
+# - Joins come from the primary and foreign keys on the tables; column descriptions from their comments.
 resources:
   genie_spaces:
     sales_agent:
       title: Sales Analytics
-      description: Revenue, orders, average order value and customers by region, country, market segment and order priority. For sales managers
-        and analysts. Does not cover costs, margins or forecasts.
+      description: >-
+        Revenue, orders, average order value and customers by region, country, market segment and order
+        priority. For sales managers and analysts. Does not cover costs, margins or forecasts.
       warehouse_id: ${var.warehouse_id}
       permissions:
         - level: CAN_RUN
@@ -16,275 +19,103 @@ resources:
         version: 2
         config:
           sample_questions:
-          - id: 054189bd8fd374c2624f2bc793ab72bf
-            question:
-            - Who are our top 10 customers by revenue this year?
-          - id: 1fd3664366ba24df92477062fe8d2e9d
-            question:
-            - What is the average order value by market segment?
-          - id: 701e6a0133ba758395b43ce0c7889393
-            question:
-            - How many open orders do we have?
-          - id: 7e6fd7a8522c5ca7021acd0827329854
-            question:
-            - What was total revenue in 2025?
-          - id: bc39528f717af9fb2f36d280d02bbe12
-            question:
-            - Show monthly revenue for 2025.
-          - id: d6ca52d80880375dfda555869abf7c00
-            question:
-            - Which region had the highest revenue in 2025?
+            - id: "a0000000000000000000000000000001"
+              question: ["What was total revenue in 2025?"]
+            - id: "a0000000000000000000000000000002"
+              question: ["Which region had the highest revenue in 2025?"]
+            - id: "a0000000000000000000000000000003"
+              question: ["Who are our top 10 customers by revenue?"]
+            - id: "a0000000000000000000000000000004"
+              question: ["Show monthly revenue for 2025."]
+            - id: "a0000000000000000000000000000005"
+              question: ["How many open orders do we have?"]
+            - id: "a0000000000000000000000000000006"
+              question: ["What is the average order value by market segment?"]
         data_sources:
           tables:
-          - identifier: ${var.catalog}.${var.schema}.customers
-            column_configs:
-            - column_name: country
-              enable_entity_matching: true
-              enable_format_assistance: true
-            - column_name: market_segment
-              enable_entity_matching: true
-              enable_format_assistance: true
-              synonyms:
-              - segment
-              - industry
-            - column_name: region
-              enable_entity_matching: true
-              enable_format_assistance: true
-          - identifier: ${var.catalog}.${var.schema}.orders
-            column_configs:
-            - column_name: order_amount
-              synonyms:
-              - revenue
-              - sales
-              - order value
-            - column_name: order_priority
-              enable_entity_matching: true
-              enable_format_assistance: true
-            - column_name: order_status
-              enable_entity_matching: true
-              enable_format_assistance: true
+            - identifier: ${var.catalog}.${var.schema}.customers
+              column_configs:
+                - {column_name: country, enable_entity_matching: true}
+                - {column_name: market_segment, enable_entity_matching: true}
+                - {column_name: region, enable_entity_matching: true}
+            - identifier: ${var.catalog}.${var.schema}.orders
+              column_configs:
+                - {column_name: order_priority, enable_entity_matching: true}
+                - {column_name: order_status, enable_entity_matching: true}
         instructions:
           text_instructions:
-          - id: 41742db7c80e486e18d0e019be3190c8
-            content:
-            - '## PURPOSE
-
-              - Answers sales questions: revenue, orders, average order value and customers by region, country, market segment and order priority.
-
-              - Out of scope: costs, margins, inventory and forecasts. Say so instead of guessing.
-
-
-              ## DEFINITIONS
-
-              - Revenue means SUM(orders.order_amount). Average order value means AVG(orders.order_amount).
-
-              - Order status values are Open, Fulfilled and Partial.
-
-              - When no year is given, use the latest full year in the data (2025) and state that assumption.
-
-
-              ## CLARIFY
-
-              - If a question asks for profit or margin, explain that the agent only covers revenue.'
+            - id: "c0000000000000000000000000000001"
+              content:
+                - |
+                  Revenue means SUM(orders.order_amount); average order value means AVG(orders.order_amount).
+                  When no year is given, use 2025, the latest full year, and say so.
+                  Costs, margins and forecasts are out of scope: say so instead of guessing.
           example_question_sqls:
-          - id: 1cfcf62482243e82fc7073e7d1552c86
-            question:
-            - What was revenue by region in 2024?
-            sql:
-            - SELECT c.region, SUM(o.order_amount) AS revenue FROM ${var.catalog}.${var.schema}.orders o JOIN ${var.catalog}.${var.schema}.customers
-              c ON o.customer_id = c.customer_id WHERE YEAR(o.order_date) = 2024 GROUP BY c.region ORDER BY revenue DESC
-            usage_guidance:
-            - 'Revenue by a customer attribute: join orders to customers on customer_id.'
-          - id: 3a84cfbb82cb8f80767318c5e66df6ec
-            question:
-            - Who are the top customers by revenue?
-            sql:
-            - SELECT c.customer_name, SUM(o.order_amount) AS revenue FROM ${var.catalog}.${var.schema}.orders o JOIN ${var.catalog}.${var.schema}.customers
-              c ON o.customer_id = c.customer_id GROUP BY c.customer_name ORDER BY revenue DESC LIMIT 10
-            usage_guidance:
-            - 'Top-N customers: rank by SUM(order_amount).'
-          join_specs:
-          - id: 05ba53ec52a328c7702fada32a6a840f
-            left:
-              identifier: ${var.catalog}.${var.schema}.orders
-              alias: orders
-            right:
-              identifier: ${var.catalog}.${var.schema}.customers
-              alias: customers
-            sql:
-            - '`orders`.`customer_id` = `customers`.`customer_id`'
-            - --rt=FROM_RELATIONSHIP_TYPE_MANY_TO_ONE--
-          sql_snippets:
-            measures:
-            - id: 550d2a9628085ff62aa4ee4b48e884a0
-              alias: average_order_value
-              display_name: Average order value
-              sql:
-              - AVG(orders.order_amount)
-              synonyms:
-              - AOV
-              - average order size
-            - id: dc4ea9951a31dad8639e6f2451a06d7e
-              alias: revenue
-              display_name: Revenue
-              sql:
-              - SUM(orders.order_amount)
-              synonyms:
-              - sales
-              - turnover
+            - id: "d0000000000000000000000000000001"
+              question: ["What was revenue by region in 2024?"]
+              sql: ["SELECT c.region, SUM(o.order_amount) AS revenue FROM ${var.catalog}.${var.schema}.orders o JOIN ${var.catalog}.${var.schema}.customers c ON o.customer_id = c.customer_id WHERE YEAR(o.order_date) = 2024 GROUP BY c.region ORDER BY revenue DESC"]
+            - id: "d0000000000000000000000000000002"
+              question: ["Who are the top customers by revenue?"]
+              sql: ["SELECT c.customer_name, SUM(o.order_amount) AS revenue FROM ${var.catalog}.${var.schema}.orders o JOIN ${var.catalog}.${var.schema}.customers c ON o.customer_id = c.customer_id GROUP BY c.customer_name ORDER BY revenue DESC LIMIT 10"]
         benchmarks:
           questions:
-          - id: 08c81150b751ec363e59952e75c8f513
-            question:
-            - How many customers are in each market segment?
-            answer:
-            - format: SQL
-              content:
-              - SELECT market_segment, COUNT(*) AS customers FROM ${var.catalog}.${var.schema}.customers GROUP BY market_segment ORDER BY customers
-                DESC
-          - id: 0cfee9599f3a15ff866d62c76f871ddf
-            question:
-            - What was revenue per month in 2025?
-            answer:
-            - format: SQL
-              content:
-              - SELECT DATE_TRUNC('MONTH', order_date) AS month, SUM(order_amount) AS revenue FROM ${var.catalog}.${var.schema}.orders WHERE YEAR(order_date)
-                = 2025 GROUP BY 1 ORDER BY 1
-          - id: 0e1c58e5b445d71859a84562eedd5272
-            question:
-            - How much did we sell in 2025 in total?
-            answer:
-            - format: SQL
-              content:
-              - SELECT SUM(order_amount) AS total_revenue FROM ${var.catalog}.${var.schema}.orders WHERE YEAR(order_date) = 2025
-          - id: 13155bef643094da58ce73c6eb43fd06
-            question:
-            - Which country had the highest revenue in 2024?
-            answer:
-            - format: SQL
-              content:
-              - SELECT c.country, SUM(o.order_amount) AS revenue FROM ${var.catalog}.${var.schema}.orders o JOIN ${var.catalog}.${var.schema}.customers
-                c ON o.customer_id = c.customer_id WHERE YEAR(o.order_date) = 2024 GROUP BY c.country ORDER BY revenue DESC LIMIT 1
-          - id: 274708bd8a1365448c8d0f92eead4400
-            question:
-            - What was the average order value by market segment in 2025?
-            answer:
-            - format: SQL
-              content:
-              - SELECT c.market_segment, AVG(o.order_amount) AS average_order_value FROM ${var.catalog}.${var.schema}.orders o JOIN ${var.catalog}.${var.schema}.customers
-                c ON o.customer_id = c.customer_id WHERE YEAR(o.order_date) = 2025 GROUP BY c.market_segment ORDER BY average_order_value DESC
-          - id: 3eb07eef833c170e60551d636ba9e444
-            question:
-            - Break down 2025 revenue by region.
-            answer:
-            - format: SQL
-              content:
-              - SELECT c.region, SUM(o.order_amount) AS revenue FROM ${var.catalog}.${var.schema}.orders o JOIN ${var.catalog}.${var.schema}.customers
-                c ON o.customer_id = c.customer_id WHERE YEAR(o.order_date) = 2025 GROUP BY c.region ORDER BY revenue DESC
-          - id: 5531f3649cd85cf7de7d27c99ac2dcba
-            question:
-            - Show monthly revenue for 2025.
-            answer:
-            - format: SQL
-              content:
-              - SELECT DATE_TRUNC('MONTH', order_date) AS month, SUM(order_amount) AS revenue FROM ${var.catalog}.${var.schema}.orders WHERE YEAR(order_date)
-                = 2025 GROUP BY 1 ORDER BY 1
-          - id: 57a497015d27e1fed2c0372e0850a193
-            question:
-            - Who were the top 5 customers by revenue in 2025?
-            answer:
-            - format: SQL
-              content:
-              - SELECT c.customer_name, SUM(o.order_amount) AS revenue FROM ${var.catalog}.${var.schema}.orders o JOIN ${var.catalog}.${var.schema}.customers
-                c ON o.customer_id = c.customer_id WHERE YEAR(o.order_date) = 2025 GROUP BY c.customer_name ORDER BY revenue DESC LIMIT 5
-          - id: 5a773527d88ca85ce5f43b89c00d6d30
-            question:
-            - What was the order count for 2024?
-            answer:
-            - format: SQL
-              content:
-              - SELECT COUNT(*) AS order_count FROM ${var.catalog}.${var.schema}.orders WHERE YEAR(order_date) = 2024
-          - id: 5dcb0edc42a78d0dd44997ecccf8c407
-            question:
-            - What was total revenue in 2025?
-            answer:
-            - format: SQL
-              content:
-              - SELECT SUM(order_amount) AS total_revenue FROM ${var.catalog}.${var.schema}.orders WHERE YEAR(order_date) = 2025
-          - id: 675b978fcbd7aee48aa70df7b38bcbc2
-            question:
-            - How many open orders are there?
-            answer:
-            - format: SQL
-              content:
-              - SELECT COUNT(*) AS open_orders FROM ${var.catalog}.${var.schema}.orders WHERE order_status = 'Open'
-          - id: 681177a57d41649716e666518fe5c0c3
-            question:
-            - Split 2025 revenue by order priority.
-            answer:
-            - format: SQL
-              content:
-              - SELECT order_priority, SUM(order_amount) AS revenue FROM ${var.catalog}.${var.schema}.orders WHERE YEAR(order_date) = 2025 GROUP
-                BY order_priority ORDER BY order_priority
-          - id: 9106587fabde4829f61c8acb6945f000
-            question:
-            - Customer count per market segment?
-            answer:
-            - format: SQL
-              content:
-              - SELECT market_segment, COUNT(*) AS customers FROM ${var.catalog}.${var.schema}.customers GROUP BY market_segment ORDER BY customers
-                DESC
-          - id: 97bd2654f23694756862773150c0825b
-            question:
-            - What was revenue by region in 2025?
-            answer:
-            - format: SQL
-              content:
-              - SELECT c.region, SUM(o.order_amount) AS revenue FROM ${var.catalog}.${var.schema}.orders o JOIN ${var.catalog}.${var.schema}.customers
-                c ON o.customer_id = c.customer_id WHERE YEAR(o.order_date) = 2025 GROUP BY c.region ORDER BY revenue DESC
-          - id: 9f835af7d476edb65ea63f7fc33c01dd
-            question:
-            - What was 2025 revenue by order priority?
-            answer:
-            - format: SQL
-              content:
-              - SELECT order_priority, SUM(order_amount) AS revenue FROM ${var.catalog}.${var.schema}.orders WHERE YEAR(order_date) = 2025 GROUP
-                BY order_priority ORDER BY order_priority
-          - id: a9664f0ff314ba9ca12cc503f2b862ba
-            question:
-            - How many orders were placed in 2024?
-            answer:
-            - format: SQL
-              content:
-              - SELECT COUNT(*) AS order_count FROM ${var.catalog}.${var.schema}.orders WHERE YEAR(order_date) = 2024
-          - id: b4802f575264fc5062eb9d8060c65250
-            question:
-            - Top country by revenue in 2024?
-            answer:
-            - format: SQL
-              content:
-              - SELECT c.country, SUM(o.order_amount) AS revenue FROM ${var.catalog}.${var.schema}.orders o JOIN ${var.catalog}.${var.schema}.customers
-                c ON o.customer_id = c.customer_id WHERE YEAR(o.order_date) = 2024 GROUP BY c.country ORDER BY revenue DESC LIMIT 1
-          - id: b7c75ca4c8ea447b2a9a81306f1cafe3
-            question:
-            - What is the number of orders that are still open?
-            answer:
-            - format: SQL
-              content:
-              - SELECT COUNT(*) AS open_orders FROM ${var.catalog}.${var.schema}.orders WHERE order_status = 'Open'
-          - id: c32f6b24d0d7a406e3de513f5eb0c1dc
-            question:
-            - Average 2025 order size per market segment?
-            answer:
-            - format: SQL
-              content:
-              - SELECT c.market_segment, AVG(o.order_amount) AS average_order_value FROM ${var.catalog}.${var.schema}.orders o JOIN ${var.catalog}.${var.schema}.customers
-                c ON o.customer_id = c.customer_id WHERE YEAR(o.order_date) = 2025 GROUP BY c.market_segment ORDER BY average_order_value DESC
-          - id: f7d15aa72b840fbb3a9d007de582f71f
-            question:
-            - List the five biggest customers by 2025 revenue.
-            answer:
-            - format: SQL
-              content:
-              - SELECT c.customer_name, SUM(o.order_amount) AS revenue FROM ${var.catalog}.${var.schema}.orders o JOIN ${var.catalog}.${var.schema}.customers
-                c ON o.customer_id = c.customer_id WHERE YEAR(o.order_date) = 2025 GROUP BY c.customer_name ORDER BY revenue DESC LIMIT 5
+            - id: "b0000000000000000000000000000001"
+              question: ["What was total revenue in 2025?"]
+              answer: [{format: SQL, content: ["SELECT SUM(order_amount) AS total_revenue FROM ${var.catalog}.${var.schema}.orders WHERE YEAR(order_date) = 2025"]}]
+            - id: "b0000000000000000000000000000002"
+              question: ["How much did we sell in 2025 in total?"]
+              answer: [{format: SQL, content: ["SELECT SUM(order_amount) AS total_revenue FROM ${var.catalog}.${var.schema}.orders WHERE YEAR(order_date) = 2025"]}]
+            - id: "b0000000000000000000000000000003"
+              question: ["How many orders were placed in 2024?"]
+              answer: [{format: SQL, content: ["SELECT COUNT(*) AS order_count FROM ${var.catalog}.${var.schema}.orders WHERE YEAR(order_date) = 2024"]}]
+            - id: "b0000000000000000000000000000004"
+              question: ["What was the order count for 2024?"]
+              answer: [{format: SQL, content: ["SELECT COUNT(*) AS order_count FROM ${var.catalog}.${var.schema}.orders WHERE YEAR(order_date) = 2024"]}]
+            - id: "b0000000000000000000000000000005"
+              question: ["What was revenue by region in 2025?"]
+              answer: [{format: SQL, content: ["SELECT c.region, SUM(o.order_amount) AS revenue FROM ${var.catalog}.${var.schema}.orders o JOIN ${var.catalog}.${var.schema}.customers c ON o.customer_id = c.customer_id WHERE YEAR(o.order_date) = 2025 GROUP BY c.region ORDER BY revenue DESC"]}]
+            - id: "b0000000000000000000000000000006"
+              question: ["Break down 2025 revenue by region."]
+              answer: [{format: SQL, content: ["SELECT c.region, SUM(o.order_amount) AS revenue FROM ${var.catalog}.${var.schema}.orders o JOIN ${var.catalog}.${var.schema}.customers c ON o.customer_id = c.customer_id WHERE YEAR(o.order_date) = 2025 GROUP BY c.region ORDER BY revenue DESC"]}]
+            - id: "b0000000000000000000000000000007"
+              question: ["Who were the top 5 customers by revenue in 2025?"]
+              answer: [{format: SQL, content: ["SELECT c.customer_name, SUM(o.order_amount) AS revenue FROM ${var.catalog}.${var.schema}.orders o JOIN ${var.catalog}.${var.schema}.customers c ON o.customer_id = c.customer_id WHERE YEAR(o.order_date) = 2025 GROUP BY c.customer_name ORDER BY revenue DESC LIMIT 5"]}]
+            - id: "b0000000000000000000000000000008"
+              question: ["List the five biggest customers by 2025 revenue."]
+              answer: [{format: SQL, content: ["SELECT c.customer_name, SUM(o.order_amount) AS revenue FROM ${var.catalog}.${var.schema}.orders o JOIN ${var.catalog}.${var.schema}.customers c ON o.customer_id = c.customer_id WHERE YEAR(o.order_date) = 2025 GROUP BY c.customer_name ORDER BY revenue DESC LIMIT 5"]}]
+            - id: "b0000000000000000000000000000009"
+              question: ["Show monthly revenue for 2025."]
+              answer: [{format: SQL, content: ["SELECT DATE_TRUNC('MONTH', order_date) AS month, SUM(order_amount) AS revenue FROM ${var.catalog}.${var.schema}.orders WHERE YEAR(order_date) = 2025 GROUP BY 1 ORDER BY 1"]}]
+            - id: "b0000000000000000000000000000010"
+              question: ["What was revenue per month in 2025?"]
+              answer: [{format: SQL, content: ["SELECT DATE_TRUNC('MONTH', order_date) AS month, SUM(order_amount) AS revenue FROM ${var.catalog}.${var.schema}.orders WHERE YEAR(order_date) = 2025 GROUP BY 1 ORDER BY 1"]}]
+            - id: "b0000000000000000000000000000011"
+              question: ["What was the average order value by market segment in 2025?"]
+              answer: [{format: SQL, content: ["SELECT c.market_segment, AVG(o.order_amount) AS average_order_value FROM ${var.catalog}.${var.schema}.orders o JOIN ${var.catalog}.${var.schema}.customers c ON o.customer_id = c.customer_id WHERE YEAR(o.order_date) = 2025 GROUP BY c.market_segment ORDER BY average_order_value DESC"]}]
+            - id: "b0000000000000000000000000000012"
+              question: ["Average 2025 order size per market segment?"]
+              answer: [{format: SQL, content: ["SELECT c.market_segment, AVG(o.order_amount) AS average_order_value FROM ${var.catalog}.${var.schema}.orders o JOIN ${var.catalog}.${var.schema}.customers c ON o.customer_id = c.customer_id WHERE YEAR(o.order_date) = 2025 GROUP BY c.market_segment ORDER BY average_order_value DESC"]}]
+            - id: "b0000000000000000000000000000013"
+              question: ["How many open orders are there?"]
+              answer: [{format: SQL, content: ["SELECT COUNT(*) AS open_orders FROM ${var.catalog}.${var.schema}.orders WHERE order_status = 'Open'"]}]
+            - id: "b0000000000000000000000000000014"
+              question: ["What is the number of orders that are still open?"]
+              answer: [{format: SQL, content: ["SELECT COUNT(*) AS open_orders FROM ${var.catalog}.${var.schema}.orders WHERE order_status = 'Open'"]}]
+            - id: "b0000000000000000000000000000015"
+              question: ["Which country had the highest revenue in 2024?"]
+              answer: [{format: SQL, content: ["SELECT c.country, SUM(o.order_amount) AS revenue FROM ${var.catalog}.${var.schema}.orders o JOIN ${var.catalog}.${var.schema}.customers c ON o.customer_id = c.customer_id WHERE YEAR(o.order_date) = 2024 GROUP BY c.country ORDER BY revenue DESC LIMIT 1"]}]
+            - id: "b0000000000000000000000000000016"
+              question: ["Top country by revenue in 2024?"]
+              answer: [{format: SQL, content: ["SELECT c.country, SUM(o.order_amount) AS revenue FROM ${var.catalog}.${var.schema}.orders o JOIN ${var.catalog}.${var.schema}.customers c ON o.customer_id = c.customer_id WHERE YEAR(o.order_date) = 2024 GROUP BY c.country ORDER BY revenue DESC LIMIT 1"]}]
+            - id: "b0000000000000000000000000000017"
+              question: ["What was 2025 revenue by order priority?"]
+              answer: [{format: SQL, content: ["SELECT order_priority, SUM(order_amount) AS revenue FROM ${var.catalog}.${var.schema}.orders WHERE YEAR(order_date) = 2025 GROUP BY order_priority ORDER BY order_priority"]}]
+            - id: "b0000000000000000000000000000018"
+              question: ["Split 2025 revenue by order priority."]
+              answer: [{format: SQL, content: ["SELECT order_priority, SUM(order_amount) AS revenue FROM ${var.catalog}.${var.schema}.orders WHERE YEAR(order_date) = 2025 GROUP BY order_priority ORDER BY order_priority"]}]
+            - id: "b0000000000000000000000000000019"
+              question: ["How many customers are in each market segment?"]
+              answer: [{format: SQL, content: ["SELECT market_segment, COUNT(*) AS customers FROM ${var.catalog}.${var.schema}.customers GROUP BY market_segment ORDER BY customers DESC"]}]
+            - id: "b0000000000000000000000000000020"
+              question: ["Customer count per market segment?"]
+              answer: [{format: SQL, content: ["SELECT market_segment, COUNT(*) AS customers FROM ${var.catalog}.${var.schema}.customers GROUP BY market_segment ORDER BY customers DESC"]}]

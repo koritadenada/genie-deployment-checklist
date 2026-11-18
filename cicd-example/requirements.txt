@@ -1,0 +1,3 @@
+# Python packages for the scripts in this folder (make setup installs them into .venv)
+databricks-sdk>=0.68.0
+PyYAML>=6.0
